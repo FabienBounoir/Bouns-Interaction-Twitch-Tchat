@@ -1,7 +1,5 @@
 <script>
-    import logo from './assets/svelte.png'
-    import video from './assets/animation.png'
-    import { fade, fly } from 'svelte/transition';
+    import { fade } from 'svelte/transition';
 
     import agacer from './assets/animation/agacer.png'
     import fete from './assets/animation/fete.png'
@@ -24,7 +22,7 @@
             secure: true,
             reconnect: true
         },
-        channels: ["squeezie","rebeudeter","skyrroz", "kamet0", "hasanabi"]
+        channels: ["badbounsTV"]
     });
 
     client.connect();

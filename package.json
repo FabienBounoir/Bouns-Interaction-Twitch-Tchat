@@ -1,5 +1,6 @@
 {
   "name": "bounsanimation",
+  "homepage": "http://fabienbounoir.github.io/Bouns-Interaction-Twitch-Tchat",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
