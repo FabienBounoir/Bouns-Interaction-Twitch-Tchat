@@ -1,5 +1,6 @@
 <script>
-    import { fade } from 'svelte/transition';
+    import { fade,scale,slide } from 'svelte/transition';
+    import { v4 } from 'uuid';
 
     import agacer from './assets/animation/agacer.png'
     import fete from './assets/animation/fete.png'
@@ -14,7 +15,12 @@
     import non from './assets/animation/non.png'
     import oups from './assets/animation/oups.png'
 
-    let timeOut
+    let query = location.search.split(/[?&]/g).reduce((a, pair) => {
+        if (!pair.trim()) return a
+        const [key, value] = pair.split("=")
+        a[key] = value
+        return a
+    }, {})
 
     const client = new tmi.Client({
         options: { debug: false },
@@ -22,185 +28,151 @@
             secure: true,
             reconnect: true
         },
-        channels: ["badbounsTV","amouranth","rebeudeter"]
+        channels: query?.chaine?.split(',') || ["badbounstv"]
     });
 
     client.connect();
 
-    import transparent from './assets/animation/transparent.png'
+    let image = [fete, grrr, hop, love, nice, yo, ah,]
 
-    let image = [agacer, fete, grrr, hop, love, nice, yo, ah, non, oups, insulte, explosion]
+    let actualPicture = ""
 
-    let actualPicture = transparent
-
-    const typewriter = (node, { speed = 50 }) => {
-        const valid =
-            node.childNodes.length === 1 && node.childNodes[0].nodeType === 3;
-        if (!valid) {
-            return;
-        }
-        const text = node.textContent;
-        const duration = text.length * speed;
-        return {
-            duration,
-            tick: t => {
-                const i = Math.ceil(text.length * t);
-                node.textContent = text.slice(0, i);
-            }
-        };  
-    };
-
-    // let tchat = [{name: `coucou`}, {name: `coucouergeringi rengierb b`}, {name: `coucouergergre herh e erh er hhe`}];
     let tchat = [];
 
-    if(false)
+    function parseEmote(text, emotes)
+    {
+        var splitText = text.split('');
+        for(var i in emotes) {
+            var e = emotes[i];
+            for(var j in e) {
+                var mote = e[j];
+                if(typeof mote == 'string') {
+                    mote = mote.split('-');
+                    mote = [parseInt(mote[0]), parseInt(mote[1])];
+                    var length =  mote[1] - mote[0],
+                        empty = Array.apply(null, new Array(length + 1)).map(function() { return '' });
+                    splitText = splitText.slice(0, mote[0]).concat(empty).concat(splitText.slice(mote[1] + 1, splitText.length));
+                    splitText.splice(mote[0], 1, '<img class="emote" style="width: 1.5em;"  src="http://static-cdn.jtvnw.net/emoticons/v1/' + i + '/3.0">');
+                }
+            }
+        }
+        return splitText.join('')
+    }
+
+    if(query.message === "true" || false)
     {
         client.on('message', (channel, tags, message, self) => {
             if(tags['message-type'] == "whisper") return
-    
-            clearTimeOut()
 
-            tchat = [...tchat.slice(), {message: `${message}`, type: "tchat"}]
-    
-            actualPicture = image[Math.floor(Math.random() * image.length)]
-    
-            clearAvatar()
+            randomAvatar()
+
+            if(tags.emotes == null)
+            {
+                push({message: `${message}`, type: "tchat"})
+            }
+            else
+            {
+                console.log(parseEmote(message, tags.emotes))
+                push({message: `${parseEmote(message, tags.emotes)}`, type: "tchat"})
+            }
         });
     }
 
     client.on("subscription", (channel, username, method, message, userstate) => {
-        // console.log(username)
-        // console.log(method)
-        // console.log(message)
-        // console.log(userstate)
-
         setAvatar(love)
-
-        tchat = [...tchat.slice(), {message: `Merci pour le Sub @${username}`, name: "Sub", type: "sub"}]
-
-        clearAvatar()
+        push({message: `Merci pour le Sub @${username}`, name: "Sub", type: "sub"})
     });
 
     client.on("resub", (channel, username, months, message, userstate, methods) => {
-        // console.log(username)
-        // console.log(months)
-        // console.log(message)
-        // console.log(userstate)
-        // console.log(methods)
-
         setAvatar(fete)
 
-        tchat = [...tchat.slice(), {message: `Merci pour le resub @${username}`, name: "Resub", type: "resub"}]
-
-        clearAvatar()
+        console.log(months)
+        console.log(userstate)
+        push({message: `Merci pour le resub @${username}`, name: `Resub ${userstate["msg-param-cumulative-months"]}eme mois`, type: "resub"})
     });
 
     client.on("messagedeleted", (channel, username, deletedMessage, userstate) => {
         setAvatar(oups)
 
-        tchat = [...tchat.slice(), {message: `Attention a ton language @${username}`, name:"Warning", type: "warning"}]
-
-        clearAvatar()
+        push({message: `Attention à ton langage @${username}`, name:"Warning", type: "warning"})
     });
 
     client.on("subgift", (channel, username, streakMonths, recipient, methods, userstate) => {
         let senderCount = ~~userstate["msg-param-sender-count"];
-        
         console.log(userstate)
         console.log(streakMonths)
         console.log(recipient)
         console.log(methods)
+        console.log("sub offert")
 
-        setAvatar(explosion)
-
-        tchat = [...tchat.slice(), {message: `Merci @${username} pour les ${senderCount} sub gift`, name: "Sub Gift", type: "sub"}]
-
-        clearAvatar()
+        setAvatar(nice)
+        push({message: `Merci @${username} pour les ${senderCount} sub gift`, name: "Sub Gift", type: "sub"})
     });
 
     client.on("submysterygift", (channel, username, numbOfSubs, methods, userstate) => {
         let senderCount = ~~userstate["msg-param-sender-count"];
+        console.log("Sub offert aleatoire")
 
-        setAvatar(nice)
-
-        tchat = [...tchat.slice(), {message: `Merci @${username} pour les ${senderCount} sub gift`, name: "Sub Gift Mysterieux", type: "sub"}]
-
-        clearAvatar()
+        setAvatar(explosion)
+        push({message: `Merci @${username} pour les ${senderCount} sub gift`, name: "Sub Gift", type: "sub"})
     });
 
     client.on("ban", (channel, username, reason, userstate) => {
-
         setAvatar(insulte)
-
-        tchat = [...tchat.slice(), {message: `@${username} a été ban !`, name:"Ban", type: "ban"}]
-
-        clearAvatar()
+        push({message: `@${username} a été ban !`, name:"Ban", type: "ban"})
     });
 
     client.on("timeout", (channel, username, reason, duration, userstate) => {
-        
         setAvatar(agacer)
-
-        tchat = [...tchat.slice(), {message: `@${username} est Time out pendant ${duration} secondes`, name:"Time Out", type: "ban"}]
-
-        clearAvatar()
+        push({message: `@${username} expulsé pour ${duration} secondes`, name:"Time Out", type: "ban"})
     });
 
-    function clearTimeOut(){
-        clearTimeout(timeOut)
-    }
+    const push = (snack) => {      
+        snack._id = v4();
+        tchat = [...tchat, snack];
+
+		setTimeout(() => {
+			tchat = tchat.filter((s) => s._id !== snack._id);
+		}, 8000);
+	};
 
     function setAvatar(avatar){
-        clearTimeOut()
         actualPicture = avatar
     }
 
     function randomAvatar(){
-        clearTimeOut()
         actualPicture = image[Math.floor(Math.random() * image.length)]
     }
 
-    function clearAvatar(){
-        timeOut = setTimeout(() => {
-                actualPicture = transparent
-        }, 19000);
-    }
-
-    // function textAnimation(){
-    //     let random = Math.floor(Math.random() * 10000)
-    //     tchat = [...tchat.slice(), {name: `coucou ${Math.random()}`}]
-
-    //     setTimeout(() => {
-    //         textAnimation()
-    //     }, random);
-    // }
+    // push({message: `cououeeg`, type: "tchat"})
+    // push({message: `@BadbounsTV a été ban !`, name:"Ban", type: "ban"})
+    // push({message: `@BadbounsTV expulsé pour 120 secondes`, name:"Time Out", type: "ban"})
+    // push({message: `Merci pour le Sub @BadbounsTV`, name: "Sub", type: "sub"})
+    // push({message: `Merci pour le resub @BadbounsTV`, name: `Resub 12eme mois`, type: "resub"})
+    // push({message: `Merci @BadbounsTV pour les 12 subs gifts`, name: "Sub Gift", type: "sub"})
+    // push({message: `Attention à ton langage @Leskiel`, name:"Warning", type: "warning"})
 </script>
 
 <main>
-    <!-- <img src={logo} alt="Svelte Logo" />
-    <h1>Hello world!</h1> -->
-
-    <!-- <Counter /> -->
     <div id="saver">
         <div class="gridApp">
             <div class="textfields" >
                 <ul>
-                    {#each tchat as message}
-                    <li>
+                    {#each tchat as message (message._id)}
+                    <li in:scale="{{ delay:300, duration: 500 }}" out:slide>
                         {#if message.type == "tchat"}
-                            <p in:typewriter>{message.message}</p>
+                            <p in:fade="{{ duration: 200 }}">{@html message.message}</p>
                         {/if}
                         {#if message.type == "ban"}
-                            <!-- <p in:fade>{message.name}</p> -->
-                            <div class="Embed">
+                            <div in:fade="{{ duration: 200 }}" class="Embed">
                                 <div class="top ban">{message.name}</div>
                                 <div class="bottom">
-                                    <p in:fade>{message.message}</p>
+                                    <p>{message.message}</p>
                                 </div>
                             </div>
                         {/if}
                         {#if message.type == "warning"}
-                            <div in:fade="{{ duration: 700 }}" class="Embed">
+                            <div in:fade="{{ duration: 200 }}" class="Embed">
                                 <div class="top warning">{message.name}</div>
                                 <div class="bottom">
                                     <p>{message.message}</p>
@@ -208,7 +180,7 @@
                             </div>
                         {/if}
                         {#if message.type == "resub"}
-                            <div in:fade="{{ duration: 700 }}" class="Embed">
+                            <div in:fade="{{ duration: 200 }}" class="Embed">
                                 <div class="top resub">{message.name}</div>
                                 <div class="bottom">
                                     <p>{message.message}</p>
@@ -216,7 +188,7 @@
                             </div>
                         {/if}
                         {#if message.type == "sub"}
-                            <div in:fade="{{ duration: 700 }}" class="Embed">
+                            <div in:fade="{{ duration: 200 }}" class="Embed">
                                 <div class="top sub">{message.name}</div>
                                 <div class="bottom">
                                     <p>{message.message}</p>
@@ -228,7 +200,9 @@
                 </ul>
             </div>
             <div class="avatar">
-                <img src={actualPicture} alt=" "/>
+                {#if tchat.length}
+                    <img in:scale="{{ duration: 250 }}" out:scale="{{ delay:500, duration: 1000 }}" src={actualPicture} alt=" "/>
+                {/if}
             </div>
         </div>
     </div>
@@ -254,14 +228,14 @@
 	left: 0;
 	width: 100%;
 	height: 100%;
-    /* background-image: url("./assets/background.png"); */
+    background-image: url("./assets/background.png");
     background-size: cover;
 }
 
     .gridApp{
         display: grid;
         /* grid-template-areas: "text avatar"; */
-        grid-template-columns: 1fr 0.2fr;
+        grid-template-columns: 1fr 0.1fr;
         position: absolute;
         right: 0;
         bottom: 0;
@@ -270,14 +244,12 @@
     .textfields {
         padding: 3em 3em 0em 3em;
         margin: -3em -4em 0em -3em;
-        /* grid-area: head; */
-        overflow: hidden;
-        overflow-y: auto;
-        /* place-self: flex-end; */
+
+        overflow: hidden; 
+        overflow-y: auto; 
     }
 
     .avatar {
-        /* grid-area: avatar; */
         place-self: flex-end;
     }
 
@@ -290,7 +262,6 @@
         display: grid;
         grid-template-areas:    "Top"
                                 "Bottom";
-        /* margin: 10px 20px 10px 20px; */
     }
 
     .top{
@@ -330,9 +301,9 @@
         list-style-type: none;
         /* padding: 10px 20px 10px 20px; */
         /* border: solid 2px red; */
-        border-radius: 10px;
         background: rgba( 255, 255, 255, 0.25 );
         box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+        /* box-shadow: 0 0.5em 1em -0.25em rgba(black, 0.15); */
         backdrop-filter: blur( 6px );
         -webkit-backdrop-filter: blur( 6px );
         margin: 10px;
@@ -346,15 +317,25 @@
         line-height: 23px;
         /* letter-spacing: -.9px; */
 
-        animation: disparition 20s both;
+        /* animation: disparition 20s both; */
         width: max-content;
 
         text-align: right;
+
+        transform-origin: bottom right;
+
+        border-radius: 10px;
     } 
 
     li p{
         margin: 10px 20px 10px 20px;
         font-weight: 300;
+        align-items: center;
+        display: flex;
+    }
+
+    .emote{
+        width: 1.5em;
     }
 
     @keyframes disparition {
@@ -370,13 +351,4 @@
     }
 }
 
-    /* @media (min-width: 480px) {
-        h1 {
-        max-width: none;
-        }
-
-        p {
-        max-width: none;
-        }
-    } */
 </style>
