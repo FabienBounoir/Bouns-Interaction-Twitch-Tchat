@@ -22,7 +22,7 @@
             secure: true,
             reconnect: true
         },
-        channels: ["badbounsTV"]
+        channels: ["badbounsTV","amouranth","rebeudeter"]
     });
 
     client.connect();
