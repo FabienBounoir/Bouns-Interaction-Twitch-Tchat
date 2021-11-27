@@ -22,12 +22,14 @@
         return a
     }, {})
 
+    // @ts-ignore
     const client = new tmi.Client({
         options: { debug: false },
         connection: {
             secure: true,
             reconnect: true
         },
+        // @ts-ignore
         channels: query?.chaine?.split(',') || ["badbounstv"]
     });
 
@@ -35,7 +37,7 @@
 
     let image = [fete, grrr, hop, love, nice, yo, ah,]
 
-    let actualPicture = ""
+    let actualPicture = yo
 
     let tchat = [];
 
@@ -64,68 +66,95 @@
         client.on('message', (channel, tags, message, self) => {
             if(tags['message-type'] == "whisper") return
 
-            randomAvatar()
+            if(tchat.length != 0)
+            {
+                randomAvatar()
+            }
 
             if(tags.emotes == null)
             {
-                push({message: `${message}`, type: "tchat"})
+                push({message: `${message}`, username:tags.username, type: "tchat"})
             }
             else
             {
-                console.log(parseEmote(message, tags.emotes))
-                push({message: `${parseEmote(message, tags.emotes)}`, type: "tchat"})
+                push({message: `${parseEmote(message, tags.emotes)}`, username:tags.username, type: "tchat"})
+            }
+
+            if(tchat.length == 0)
+            {
+                setTimeout(() => {
+                    randomAvatar()
+                }, 500);
             }
         });
     }
 
-    client.on("subscription", (channel, username, method, message, userstate) => {
-        setAvatar(love)
-        push({message: `Merci pour le Sub @${username}`, name: "Sub", type: "sub"})
-    });
+    if(query.subscription === "true" || false)
+    {
+        client.on("subscription", (channel, username, method, message, userstate) => {
+            setAvatar(love)
+            push({message: `Merci pour le Sub @${username}`, name: "Sub", type: "sub"})
+        });
 
-    client.on("resub", (channel, username, months, message, userstate, methods) => {
-        setAvatar(fete)
+        client.on("resub", (channel, username, months, message, userstate, methods) => {
+            setAvatar(fete)
 
-        console.log(months)
-        console.log(userstate)
-        push({message: `Merci pour le resub @${username}`, name: `Resub ${userstate["msg-param-cumulative-months"]}eme mois`, type: "resub"})
-    });
+            console.log(months)
+            console.log(userstate)
+            push({message: `Merci pour le resub @${username}`, name: `Resub ${userstate["msg-param-cumulative-months"]}eme mois`, type: "resub"})
+        });
+    }
 
     client.on("messagedeleted", (channel, username, deletedMessage, userstate) => {
-        setAvatar(oups)
+        tchat = tchat.filter((s) => (s.message != deletedMessage || s.username != username));
 
-        push({message: `Attention à ton langage @${username}`, name:"Warning", type: "warning"})
+        if(query.deleted === "true" || false)
+        {
+            setAvatar(oups)
+            push({message: `Attention à ton langage @${username}`, name:"Warning", type: "warning"})
+        }
     });
 
-    client.on("subgift", (channel, username, streakMonths, recipient, methods, userstate) => {
-        let senderCount = ~~userstate["msg-param-sender-count"];
-        console.log(userstate)
-        console.log(streakMonths)
-        console.log(recipient)
-        console.log(methods)
-        console.log("sub offert")
+    if(query.subgift === "true" || false)
+    {
+        // client.on("subgift", (channel, username, streakMonths, recipient, methods, userstate) => {
+        //     setAvatar(nice)
+        //     push({message: `Merci @${username} pour le sub offert à ${recipient}`, name: "Sub Gift", type: "sub"})
+        // });
 
-        setAvatar(nice)
-        push({message: `Merci @${username} pour les ${senderCount} sub gift`, name: "Sub Gift", type: "sub"})
-    });
+        client.on("submysterygift", (channel, username, numbOfSubs, methods, userstate) => {
+            let senderCount = ~~userstate["msg-param-sender-count"];
+            console.log("Sub offert aleatoire")
 
-    client.on("submysterygift", (channel, username, numbOfSubs, methods, userstate) => {
-        let senderCount = ~~userstate["msg-param-sender-count"];
-        console.log("Sub offert aleatoire")
+            setAvatar(explosion)
+            push({message: `Merci @${username} pour les ${senderCount} sub gift`, name: "Sub Gift", type: "sub"})
+        });
+    }
 
-        setAvatar(explosion)
-        push({message: `Merci @${username} pour les ${senderCount} sub gift`, name: "Sub Gift", type: "sub"})
-    });
+    if(query.cheer === "true" || false)
+    {
+        client.on("cheer", (channel, userstate, message) => {
 
-    client.on("ban", (channel, username, reason, userstate) => {
-        setAvatar(insulte)
-        push({message: `@${username} a été ban !`, name:"Ban", type: "ban"})
-    });
+            console.log(userstate)
+            push({message: `Merci pour les Cheers`, name: "Cheers", type: "cheers"})
+        });
+    }
 
-    client.on("timeout", (channel, username, reason, duration, userstate) => {
-        setAvatar(agacer)
-        push({message: `@${username} expulsé pour ${duration} secondes`, name:"Time Out", type: "ban"})
-    });
+    if(query.ban === "true" || false)
+    {
+        client.on("ban", (channel, username, reason, userstate) => {
+            setAvatar(insulte)
+            push({message: `@${username} a été ban !`, name:"Ban", type: "ban"})
+        });
+    }
+
+    if(query.timeout === "true" || false)
+    {
+        client.on("timeout", (channel, username, reason, duration, userstate) => {
+            setAvatar(agacer)
+            push({message: `@${username} expulsé pour ${duration} secondes`, name:"Time Out", type: "ban"})
+        });
+    }
 
     const push = (snack) => {      
         snack._id = v4();
@@ -159,7 +188,7 @@
             <div class="textfields" >
                 <ul>
                     {#each tchat as message (message._id)}
-                    <li in:scale="{{ delay:300, duration: 500 }}" out:slide>
+                    <li in:scale="{{ delay:380, duration: 500 }}" out:slide>
                         {#if message.type == "tchat"}
                             <p in:fade="{{ duration: 200 }}">{@html message.message}</p>
                         {/if}
@@ -195,13 +224,21 @@
                                 </div>
                             </div>
                         {/if}
+                        {#if message.type == "cheers"}
+                            <div in:fade="{{ duration: 200 }}" class="Embed">
+                                <div class="top cheers">{message.name}</div>
+                                <div class="bottom">
+                                    <p>{message.message}</p>
+                                </div>
+                            </div>
+                        {/if}
                     </li>
                     {/each}
                 </ul>
             </div>
             <div class="avatar">
                 {#if tchat.length}
-                    <img in:scale="{{ duration: 250 }}" out:scale="{{ delay:500, duration: 1000 }}" src={actualPicture} alt=" "/>
+                    <img in:scale="{{ duration: 400 }}" out:scale="{{ delay:500, duration: 1000 }}" src={actualPicture} alt=" "/>
                 {/if}
             </div>
         </div>
@@ -291,6 +328,10 @@
 
     .warning{
         background: rgba(206, 142, 41, 0.7);
+    }
+
+    .cheers{
+        background: rgba(175, 77, 253, 0.7);
     }
 
     ul{
