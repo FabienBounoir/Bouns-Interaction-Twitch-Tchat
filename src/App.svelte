@@ -1,6 +1,8 @@
 <script>
     import { fade,scale,slide } from 'svelte/transition';
+    import { onMount } from 'svelte';
     import { v4 } from 'uuid';
+    import Animation from './lib/animation.svelte';
 
     import agacer from './assets/animation/agacer.png'
     import fete from './assets/animation/fete.png'
@@ -15,7 +17,10 @@
     import non from './assets/animation/non.png'
     import oups from './assets/animation/oups.png'
 
-    let query = location.search.split(/[?&]/g).reduce((a, pair) => {
+    //get query in Url
+    let query = {}
+
+    query = location.search.split(/[?&]/g).reduce((a, pair) => {
         if (!pair.trim()) return a
         const [key, value] = pair.split("=")
         a[key] = value
@@ -23,6 +28,7 @@
     }, {})
 
     // @ts-ignore
+    //init client connection
     const client = new tmi.Client({
         options: { debug: false },
         connection: {
@@ -33,14 +39,26 @@
         channels: query?.chaine?.split(',') || ["badbounstv"]
     });
 
+    //connection au tchat twitch 
     client.connect();
 
+    //component tchat 
     let image = [fete, grrr, hop, love, nice, yo, ah,]
-
     let actualPicture = yo
-
     let tchat = [];
 
+    //frame de l'animation
+    let frame;
+    // let characters;
+    // let nbElement = 10;
+    // let time = 5000;
+
+    //http://localhost:3000/index?chaine=lebouseuh,fruktozka,loeya,solaryfortnite,skyyart,ibai,thealvaro845,chess,pubg_battlegrounds,pubgkorea,joueur_du_grenier&subscription=true
+
+    let confetti = []
+    let timeout;
+
+    //remplace les text par les emotes correspondante
     function parseEmote(text, emotes)
     {
         var splitText = text.split('');
@@ -73,6 +91,14 @@
 
             if(tags.emotes == null)
             {
+                if(message == "Coucou")
+                {
+                    animation(["⭐️","❤️‍🔥","🔹"], 100, 10000)
+                }
+                if(message == "Stop")
+                {  
+
+                }
                 push({message: `${message}`, username:tags.username, type: "tchat"})
             }
             else
@@ -92,16 +118,27 @@
     if(query.subscription === "true" || false)
     {
         client.on("subscription", (channel, username, method, message, userstate) => {
+            console.log("==============================")
+            console.log(username, method)
+            console.log(userstate)
+            console.log("==============================")
+
             setAvatar(love)
-            push({message: `Merci pour le Sub @${username}`, name: "Sub", type: "sub"})
+            animation(["⭐️","❤️‍🔥","🔹"], 100, 10000)
+            push({message: `Merci pour le Sub @${username}`, name: "Sub", type: "sub"},10000)
         });
 
         client.on("resub", (channel, username, months, message, userstate, methods) => {
             setAvatar(fete)
 
-            console.log(months)
+            console.log("==============================")
+            console.log(username, message)
             console.log(userstate)
-            push({message: `Merci pour le resub @${username}`, name: `Resub ${userstate["msg-param-cumulative-months"]}eme mois`, type: "resub"})
+            console.log(methods)
+            console.log("==============================")
+
+            animation(["⭐️","❤️‍🔥","🔹",'🥳', '🎉', '✨'], 100, 10000)
+            push({message: `Merci pour le resub @${username}`, name: `Resub ${userstate["msg-param-cumulative-months"]}eme mois`, type: "resub"}, 10000)
         });
     }
 
@@ -127,7 +164,7 @@
             console.log("Sub offert aleatoire")
 
             setAvatar(explosion)
-            push({message: `Merci @${username} pour les ${senderCount} sub gift`, name: "Sub Gift", type: "sub"})
+            push({message: `Merci @${username} pour les ${senderCount} sub gift`, name: "Sub Gift", type: "sub"}, 10000 * senderCount)
         });
     }
 
@@ -136,7 +173,7 @@
         client.on("cheer", (channel, userstate, message) => {
 
             console.log(userstate)
-            push({message: `Merci pour les Cheers`, name: "Cheers", type: "cheers"})
+            push({message: `Merci pour les Cheers`, name: "Cheers", type: "cheers"},10000)
         });
     }
 
@@ -156,13 +193,13 @@
         });
     }
 
-    const push = (snack) => {      
+    const push = (snack, time=5000) => {      
         snack._id = v4();
         tchat = [...tchat, snack];
 
 		setTimeout(() => {
 			tchat = tchat.filter((s) => s._id !== snack._id);
-		}, 8000);
+		}, time);
 	};
 
     function setAvatar(avatar){
@@ -179,11 +216,52 @@
     // push({message: `Merci pour le Sub @BadbounsTV`, name: "Sub", type: "sub"})
     // push({message: `Merci pour le resub @BadbounsTV`, name: `Resub 12eme mois`, type: "resub"})
     // push({message: `Merci @BadbounsTV pour les 12 subs gifts`, name: "Sub Gift", type: "sub"})
-    // push({message: `Attention à ton langage @Leskiel`, name:"Warning", type: "warning"})
+    // push({message: `Attention à ton langage @Leskiel`, name:"Warning", type: "warning"})    
+
+    //create animation
+    function animation(characters, nbElement, time)
+    {
+        clearTimeout(timeout)
+
+        timeout = setTimeout(() => {
+            cancelAnimationFrame(frame);
+            confetti = []
+        }, time);
+
+        if(confetti.length != 0) return
+
+        confetti = new Array(nbElement).fill()
+        .map((_, i) => {
+            return {
+                character: characters[i % characters.length],
+                x: Math.random() * 100,
+                y: -40 - Math.random() * 100,
+                r: 0.1 + Math.random() * 1
+            };
+        })
+        .sort((a, b) => a.r - b.r);
+
+        function loop() {
+            frame = requestAnimationFrame(loop);
+            confetti = confetti.map(emoji => {
+                emoji.y += 0.7 * emoji.r;
+                if (emoji.y > 120) emoji.y = -40;
+                return emoji;
+            });
+        }
+
+        loop();
+    }
+
 </script>
 
 <main>
     <div id="saver">
+        <!-- <Animation confetti={confetti}/> -->
+        {#each confetti as c}
+            <span style="left: {c.x}%; top: {c.y}%; transform: scale({c.r})">{c.character}</span>
+            <!-- <img class="animationAvatar" style="left: {c.x}%; top: {c.y}%; transform: scale({c.r})" src={actualPicture} alt=" "/> -->
+        {/each}
         <div class="gridApp">
             <div class="textfields" >
                 <ul>
@@ -257,7 +335,22 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    } 
+    }
+
+    :global(body) {
+		overflow: hidden;
+	}
+
+	span {
+		position: absolute;
+		font-size: 5vw;
+		user-select: none;
+	}
+
+    .animationAvatar {
+        position: absolute;
+		user-select: none;
+    }
 
     div#saver {
 	position: absolute;
