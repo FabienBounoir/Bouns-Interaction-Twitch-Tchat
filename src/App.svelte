@@ -30,6 +30,7 @@
     import violet from './assets/logo/logo-violet.png'
     import white from './assets/logo/logo-white.png'
     import yellow from './assets/logo/logo-yellow.png'
+    import bits from './assets/bits.gif'
 
     //get query in Url
     let query = {}
@@ -97,7 +98,7 @@
         client.on('message', (channel, tags, message, self) => {
             if(tags['message-type'] == "whisper") return
 
-            if(message.length > 100) return
+            // if(message.length > 75) return
 
             if(tchat.length != 0)
             {
@@ -108,7 +109,8 @@
             {
                 if(message == "Coucou")
                 {
-                    animation([bleucyan,bleuyellow,bleurouge,orange,vert,purple,rainbow,red,roseorange,violetcyan,violet,white,yellow], 100, 10000)
+                    animation([bits], 100, 10000)
+                    // animation([bleucyan,bleuyellow,bleurouge,orange,vert,purple,rainbow,red,roseorange,violetcyan,violet,white,yellow], 100, 10000)
                 }
                 push({message: `${message}`, username:tags.username, type: "tchat"},10000)
             }
@@ -176,7 +178,7 @@
 
             setAvatar(explosion)
             animation([bleucyan,bleuyellow,bleurouge,orange,vert,purple,rainbow,red,roseorange,violetcyan,violet,white,yellow], 100, 10000 * senderCount)
-            push({message: `Merci @${username} pour les ${senderCount} sub gift`, name: "Sub Gift", type: "sub"}, 10000 * senderCount)
+            push({message: `Merci @${username} pour les ${senderCount} sub gift`, name: "Sub Gift", type: "sub"}, 1000 * senderCount > 60000 ? 60000 : (1000 * senderCount))
         });
     }
 
@@ -185,9 +187,30 @@
         client.on("cheer", (channel, userstate, message) => {
 
             console.log(userstate)
-            push({message: `Merci pour les Cheers`, name: "Cheers", type: "cheers"},10000)
+            animation([bits], 100, 10000)
+            push({message: `Merci ${userstate["display-name"]} pour les ${userstate.bits} Bits`, name: "Bits", type: "cheers"}, 10000)
         });
     }
+
+    client.on("clearchat", (channel) => {
+        tchat = []
+    });
+
+    // if(query.host === "true" || false)
+    // {
+    //     client.on("hosted", (channel, username, viewers, autohost) => {
+    //         console.log("HOSTTTEEDEDEDEFNKE?FNIENOF  NENI IFN")
+    //         push({message: `Merci ${username} pour l'host`, name: "Host", type: "host"}, 10000)
+    //     });
+    // }
+
+    // if(query.raid === "true" || false)
+    // {
+    //     client.on("raided", (channel, username, viewers) => {
+    //         console.log("HOSTTTEEDEDEDEFNKE?FNIENOF  NENI IFN")
+    //         push({message: `Merci ${username} pour le raid avec ${viewers} viewers`, name: "Host", type: "host"}, 10000)
+    //     });
+    // }
 
     if(query.ban === "true" || false)
     {
@@ -209,14 +232,14 @@
         snack._id = v4();
         tchat = [...tchat, snack];
 
-        // if(tchat.filter((s) => s.type == "tchat").length > 5)
-        // {
-        //     tchat = tchat.filter((s) => s.type != "tchat").push(tchat.slice(tchat.length - 5))
-        // }
+        if(tchat.filter((s) => s.type == "tchat").length > 8)
+        {
+            tchat = tchat.slice(tchat.length - 8)
+        }
 
 		setTimeout(() => {
 			tchat = tchat.filter((s) => s._id !== snack._id);
-		}, time);
+		}, time + 1000);
 	};
 
     function setAvatar(avatar){
@@ -225,7 +248,6 @@
     }
 
     function randomAvatar(){
-        console.log(Date.now() - timestamps)
         if(Date.now() - timestamps > 5000)
         {
             timestamps = Date.now()
@@ -283,7 +305,7 @@
         <!-- <Animation confetti={confetti}/> -->
         {#each confetti as c}
             <!-- <span style="left: {c.x}%; top: {c.y}%; transform: scale({c.r})">{c.character}</span> -->
-            <!-- <img class="animationAvatar" style="left: {c.x}%; top: {c.y}%; transform: scale({c.r})" src={actualPicture} alt=" "/> -->
+            <!-- <img class="animationAvatar" style="left: {c.x}%; top: {c.y}%; transform: scale({c.r})" src={actualPicture} alt=" "/> n<b>{message.username}</b>:&nbsp; -->
             <img class="animationAvatar" style="left: {c.x}%; top: {c.y}%; transform: scale({c.r})" src={c.character} alt=" "/>
         {/each}
         <div class="gridApp">
@@ -292,7 +314,7 @@
                     {#each tchat as message (message._id)}
                     <li in:scale="{{ delay:380, duration: 500 }}" out:slide>
                         {#if message.type == "tchat"}
-                            <p in:fade="{{ duration: 200 }}"><b>{message.username}</b>:&nbsp;{@html message.message} </p>
+                            <p in:fade="{{ duration: 200 }}"><b>{message.username}:&nbsp;</b>{@html message.message} </p>
                         {/if}
                         {#if message.type == "ban"}
                             <div in:fade="{{ duration: 200 }}" class="Embed">
@@ -329,6 +351,14 @@
                         {#if message.type == "cheers"}
                             <div in:fade="{{ duration: 200 }}" class="Embed">
                                 <div class="top cheers">{message.name}</div>
+                                <div class="bottom">
+                                    <p>{message.message}</p>
+                                </div>
+                            </div>
+                        {/if}
+                        {#if message.type == "host"}
+                            <div in:fade="{{ duration: 200 }}" class="Embed">
+                                <div class="top host">{message.name}</div>
                                 <div class="bottom">
                                     <p>{message.message}</p>
                                 </div>
@@ -382,7 +412,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        /* background-image: url("./assets/background.png"); */
+        background-image: url("./assets/background.png");
         background-size: cover;
     }
 
@@ -455,6 +485,10 @@
         background: rgba(175, 77, 253, 0.7);
     }
 
+    .host {
+        background: rgba(84, 0, 154, 0.7);
+    }
+
     ul{
         text-align: -webkit-right;
     }
@@ -481,6 +515,7 @@
 
         /* animation: disparition 20s both; */
         width: max-content;
+        max-width: 25em;
 
         text-align: right;
 
@@ -502,6 +537,10 @@
         align-items: center;
         display: flex;
     } */
+
+    b {
+        margin-bottom: auto;
+    }
 
     li p p:first-child{
         margin: 10px 20px 10px 20px;
