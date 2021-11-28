@@ -17,6 +17,20 @@
     import non from './assets/animation/non.png'
     import oups from './assets/animation/oups.png'
 
+    import bleucyan from './assets/logo/logo-bleu-cyan.png'
+    import bleuyellow from './assets/logo/logo-bleu-yellow.png'
+    import bleurouge from './assets/logo/logo-cyan-rouge.png'
+    import orange from './assets/logo/logo-orange.png'
+    import vert from './assets/logo/logo-vert.png'
+    import purple from './assets/logo/logo-purple.png'
+    import rainbow from './assets/logo/logo-rainbow.png'
+    import red from './assets/logo/logo-red.png'
+    import roseorange from './assets/logo/logo-rose-orange.png'
+    import violetcyan from './assets/logo/logo-violet-cyan.png'
+    import violet from './assets/logo/logo-violet.png'
+    import white from './assets/logo/logo-white.png'
+    import yellow from './assets/logo/logo-yellow.png'
+
     //get query in Url
     let query = {}
 
@@ -43,15 +57,14 @@
     client.connect();
 
     //component tchat 
-    let image = [fete, grrr, hop, love, nice, yo, ah,]
+    let image = [fete, hop, love, nice, yo, ah,]
     let actualPicture = yo
     let tchat = [];
 
     //frame de l'animation
     let frame;
-    // let characters;
-    // let nbElement = 10;
-    // let time = 5000;
+
+    let timestamps = Date.now()
 
     //http://localhost:3000/index?chaine=lebouseuh,fruktozka,loeya,solaryfortnite,skyyart,ibai,thealvaro845,chess,pubg_battlegrounds,pubgkorea,joueur_du_grenier&subscription=true
 
@@ -84,6 +97,8 @@
         client.on('message', (channel, tags, message, self) => {
             if(tags['message-type'] == "whisper") return
 
+            if(message.length > 100) return
+
             if(tchat.length != 0)
             {
                 randomAvatar()
@@ -93,13 +108,9 @@
             {
                 if(message == "Coucou")
                 {
-                    animation(["⭐️","❤️‍🔥","🔹"], 100, 10000)
+                    animation([bleucyan,bleuyellow,bleurouge,orange,vert,purple,rainbow,red,roseorange,violetcyan,violet,white,yellow], 100, 10000)
                 }
-                if(message == "Stop")
-                {  
-
-                }
-                push({message: `${message}`, username:tags.username, type: "tchat"})
+                push({message: `${message}`, username:tags.username, type: "tchat"},10000)
             }
             else
             {
@@ -124,7 +135,7 @@
             console.log("==============================")
 
             setAvatar(love)
-            animation(["⭐️","❤️‍🔥","🔹"], 100, 10000)
+            animation([bleucyan,bleuyellow,bleurouge,orange,vert,purple,rainbow,red,roseorange,violetcyan,violet,white,yellow], 100, 10000)
             push({message: `Merci pour le Sub @${username}`, name: "Sub", type: "sub"},10000)
         });
 
@@ -137,7 +148,7 @@
             console.log(methods)
             console.log("==============================")
 
-            animation(["⭐️","❤️‍🔥","🔹",'🥳', '🎉', '✨'], 100, 10000)
+            animation([bleucyan,bleuyellow,bleurouge,orange,vert,purple,rainbow,red,roseorange,violetcyan,violet,white,yellow], 100, 10000)
             push({message: `Merci pour le resub @${username}`, name: `Resub ${userstate["msg-param-cumulative-months"]}eme mois`, type: "resub"}, 10000)
         });
     }
@@ -164,6 +175,7 @@
             console.log("Sub offert aleatoire")
 
             setAvatar(explosion)
+            animation([bleucyan,bleuyellow,bleurouge,orange,vert,purple,rainbow,red,roseorange,violetcyan,violet,white,yellow], 100, 10000 * senderCount)
             push({message: `Merci @${username} pour les ${senderCount} sub gift`, name: "Sub Gift", type: "sub"}, 10000 * senderCount)
         });
     }
@@ -197,17 +209,28 @@
         snack._id = v4();
         tchat = [...tchat, snack];
 
+        // if(tchat.filter((s) => s.type == "tchat").length > 5)
+        // {
+        //     tchat = tchat.filter((s) => s.type != "tchat").push(tchat.slice(tchat.length - 5))
+        // }
+
 		setTimeout(() => {
 			tchat = tchat.filter((s) => s._id !== snack._id);
 		}, time);
 	};
 
     function setAvatar(avatar){
+        timestamps = Date.now()
         actualPicture = avatar
     }
 
     function randomAvatar(){
-        actualPicture = image[Math.floor(Math.random() * image.length)]
+        console.log(Date.now() - timestamps)
+        if(Date.now() - timestamps > 5000)
+        {
+            timestamps = Date.now()
+            actualPicture = image[Math.floor(Math.random() * image.length)]
+        }
     }
 
     // push({message: `cououeeg`, type: "tchat"})
@@ -244,7 +267,7 @@
         function loop() {
             frame = requestAnimationFrame(loop);
             confetti = confetti.map(emoji => {
-                emoji.y += 0.7 * emoji.r;
+                emoji.y += 0.3 * emoji.r;
                 if (emoji.y > 120) emoji.y = -40;
                 return emoji;
             });
@@ -259,8 +282,9 @@
     <div id="saver">
         <!-- <Animation confetti={confetti}/> -->
         {#each confetti as c}
-            <span style="left: {c.x}%; top: {c.y}%; transform: scale({c.r})">{c.character}</span>
+            <!-- <span style="left: {c.x}%; top: {c.y}%; transform: scale({c.r})">{c.character}</span> -->
             <!-- <img class="animationAvatar" style="left: {c.x}%; top: {c.y}%; transform: scale({c.r})" src={actualPicture} alt=" "/> -->
+            <img class="animationAvatar" style="left: {c.x}%; top: {c.y}%; transform: scale({c.r})" src={c.character} alt=" "/>
         {/each}
         <div class="gridApp">
             <div class="textfields" >
@@ -268,7 +292,7 @@
                     {#each tchat as message (message._id)}
                     <li in:scale="{{ delay:380, duration: 500 }}" out:slide>
                         {#if message.type == "tchat"}
-                            <p in:fade="{{ duration: 200 }}">{@html message.message}</p>
+                            <p in:fade="{{ duration: 200 }}"><b>{message.username}</b>:&nbsp;{@html message.message} </p>
                         {/if}
                         {#if message.type == "ban"}
                             <div in:fade="{{ duration: 200 }}" class="Embed">
@@ -353,14 +377,18 @@
     }
 
     div#saver {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-    /* background-image: url("./assets/background.png"); */
-    background-size: cover;
-}
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        /* background-image: url("./assets/background.png"); */
+        background-size: cover;
+    }
+
+    div#saver img.animationAvatar{
+        width: 5em;
+    }
 
     .gridApp{
         display: grid;
@@ -466,6 +494,21 @@
         font-weight: 300;
         align-items: center;
         display: flex;
+    }
+
+    /* li p span{
+        margin: 10px 20px 10px 20px;
+        font-weight: 300;
+        align-items: center;
+        display: flex;
+    } */
+
+    li p p:first-child{
+        margin: 10px 20px 10px 20px;
+        font-weight: 300;
+        align-items: center;
+        display: flex;
+        font-weight: bold;
     }
 
     .emote{
