@@ -196,22 +196,6 @@
         tchat = []
     });
 
-    // if(query.host === "true" || false)
-    // {
-    //     client.on("hosted", (channel, username, viewers, autohost) => {
-    //         console.log("HOSTTTEEDEDEDEFNKE?FNIENOF  NENI IFN")
-    //         push({message: `Merci ${username} pour l'host`, name: "Host", type: "host"}, 10000)
-    //     });
-    // }
-
-    // if(query.raid === "true" || false)
-    // {
-    //     client.on("raided", (channel, username, viewers) => {
-    //         console.log("HOSTTTEEDEDEDEFNKE?FNIENOF  NENI IFN")
-    //         push({message: `Merci ${username} pour le raid avec ${viewers} viewers`, name: "Host", type: "host"}, 10000)
-    //     });
-    // }
-
     if(query.ban === "true" || false)
     {
         client.on("ban", (channel, username, reason, userstate) => {
@@ -356,14 +340,6 @@
                                 </div>
                             </div>
                         {/if}
-                        {#if message.type == "host"}
-                            <div in:fade="{{ duration: 200 }}" class="Embed">
-                                <div class="top host">{message.name}</div>
-                                <div class="bottom">
-                                    <p>{message.message}</p>
-                                </div>
-                            </div>
-                        {/if}
                     </li>
                     {/each}
                 </ul>
@@ -412,7 +388,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background-image: url("./assets/background.png");
+        /* background-image: url("./assets/background.png"); */
         background-size: cover;
     }
 
@@ -483,10 +459,6 @@
 
     .cheers{
         background: rgba(175, 77, 253, 0.7);
-    }
-
-    .host {
-        background: rgba(84, 0, 154, 0.7);
     }
 
     ul{
