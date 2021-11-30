@@ -16,6 +16,7 @@
     "vite": "^2.6.4"
   },
   "dependencies": {
+    "svelte-routing": "^1.6.0",
     "tmi.js": "^1.8.5",
     "uuid": "^8.3.2"
   }
