@@ -257,8 +257,7 @@
     // push({message: `Merci @BadbounsTV pour les 12 subs gifts`, name: "Sub Gift", type: "sub"})
     // push({message: `Attention à ton langage @Leskiel`, name:"Warning", type: "warning"})    
 
-    //create
-     animation
+    //create animation
     function animation(characters, nbElement, time)
     {
         clearTimeout(timeout)
@@ -304,9 +303,9 @@
             <div class="textfields" >
                 <ul>
                     {#each tchat as message (message._id)}
-                    <li class="{query.dark === "true" ? 'dark' : 'white'}" in:scale="{{ delay: tchat.length ? (380) : (0), duration: tchat.length ? (500) : (0) }}" out:slide>
+                    <li class="{query.dark === "true" ? 'dark' : 'white'}" in:scale="{{ delay: tchat.length ? (380) : (0), duration: tchat.length > 3 ? (tchat.length > 6 ? (tchat.length > 9 ? (0) : (100)) : (250)) : (500) }}" out:slide>
                         {#if message.type == "tchat"}
-                            <p in:fade="{{ duration: 200 }}"><b>{message.username}:&nbsp;</b>{@html message.message} </p>
+                            <p in:fade="{{ duration: tchat.length > 3 ? (tchat.length > 6 ? (tchat.length > 9 ? (0) : (50)) : (100)) : (200) }}"><b>{message.username}:&nbsp;</b>{@html message.message} </p>
                         {/if}
                         {#if message.type == "ban"}
                             <div in:fade="{{ duration: 200 }}" class="Embed">
@@ -352,7 +351,7 @@
                     {/each}
                 </ul>
             </div>
-            <div class="avatar">
+            <div class="avatar {query.avatar === "true" ? '' : 'none'}">
                 {#if tchat.length}
                     <img in:scale="{{ duration: 400 }}" out:scale="{{ delay:500, duration: 1000 }}" src={actualPicture} alt=" "/>
                 {/if}
@@ -377,12 +376,7 @@
 
     :global(body) {
 		overflow: hidden;
-	}
-
-	span {
-		position: absolute;
-		font-size: 5vw;
-		user-select: none;
+        overflow-x: hidden;
 	}
 
     .animationAvatar {
@@ -396,7 +390,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background-image: url("../assets/background.png");
+        /* background-image: url("../assets/background.png"); */
         background-size: cover;
     }
 
@@ -423,6 +417,10 @@
 
     .avatar {
         place-self: flex-end;
+    }
+
+    .none{
+        display: none;
     }
 
     .avatar img{

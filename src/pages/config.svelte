@@ -1,6 +1,6 @@
 <script>
     let yes = true
-    let urlGenerator = location.origin + "/visuel"
+    let urlGenerator = location.origin + "Bouns-Interaction-Twitch-Tchat/visuel"
     let chaine = []
     let value = ""
     let config = {message:false,subscription:false,deleted:false,subgift:false,cheer:false,ban:false,timeout:false,dark:false,avatar:false,animSub:false,animSubGift:false,animCheer:false}
@@ -21,113 +21,124 @@
     }
 </script>
 
-<h1>Configuration</h1>
+<main>
+    <h1>Configuration</h1>
 
-<p>Chaine à écouter:</p>
-<input type="text" placeholder="badbounstv" bind:value={value}/>
-<button on:click={add}>add</button>
+    <p>Chaine à écouter:</p>
+    <input type="text" placeholder="badbounstv" bind:value={value}/>
+    <button on:click={add}>add</button>
 
-<div class="list">
-    {#each chaine as value}
-        <p on:click={() => {remove(value)}}>{value}</p>
-    {/each}
-</div>
+    <div class="list">
+        {#each chaine as value}
+            <p on:click={() => {remove(value)}}>{value}</p>
+        {/each}
+    </div>
 
-<h2>Events:</h2>
+    <h2>Events:</h2>
+    <div>
+        <div>
+            <label>
+                <input type=checkbox bind:checked={config.message}>
+                Messages
+            </label>
+        </div>
 
-<div>
-    <label>
-        <input type=checkbox bind:checked={config.message}>
-        Messages
-    </label>
-</div>
+        <div>
+            <label>
+                <input type=checkbox bind:checked={config.subscription}>
+                subscription
+            </label>
+        </div>
 
-<div>
-    <label>
-        <input type=checkbox bind:checked={config.subscription}>
-        subscription
-    </label>
-</div>
+        <div>
+            <label>
+                <input type=checkbox bind:checked={config.subgift}>
+                subgift
+            </label>
+        </div>
 
-<div>
-    <label>
-        <input type=checkbox bind:checked={config.deleted}>
-        deleted
-    </label>
-</div>
+        <div>
+            <label>
+                <input type=checkbox bind:checked={config.cheer}>
+                cheer
+            </label>
+        </div>
 
-<div>
-    <label>
-        <input type=checkbox bind:checked={config.subgift}>
-        subgift
-    </label>
-</div>
+        <div>
+            <label>
+                <input type=checkbox bind:checked={config.ban}>
+                ban
+            </label>
+        </div>
 
-<div>
-    <label>
-        <input type=checkbox bind:checked={config.cheer}>
-        cheer
-    </label>
-</div>
+        <div>
+            <label>
+                <input type=checkbox bind:checked={config.timeout}>
+                Time out
+            </label>
+        </div>
 
-<div>
-    <label>
-        <input type=checkbox bind:checked={config.ban}>
-        ban
-    </label>
-</div>
+        <div>
+            <label>
+                <input type=checkbox bind:checked={config.deleted}>
+                deleted
+            </label>
+        </div>
 
-<div>
-    <label>
-        <input type=checkbox bind:checked={config.timeout}>
-        Time out
-    </label>
-</div>
+    </div>
 
-<h2>Design:</h2>
+    <h2>Design:</h2>
+    <div>
+        <div>
+            <label>
+                <input type=checkbox bind:checked={config.dark}>
+                Dark mode
+            </label>
+        </div>
 
-<div>
-    <label>
-        <input type=checkbox bind:checked={config.dark}>
-        Dark mode
-    </label>
-</div>
+        <div>
+            <label>
+                <input type=checkbox bind:checked={config.avatar}>
+                Avatar
+            </label>
+        </div>
 
-<!-- <div>
-    <label>
-        <input type=checkbox bind:checked={config.avatar}>
-        Avatar
-    </label>
-</div> -->
+        {#if config.subscription}
+            <div>
+                <label>
+                    <input type=checkbox bind:checked={config.animSub}>
+                    Animation Sub
+                </label>
+            </div>
+        {/if}
 
-<div>
-    <label>
-        <input type=checkbox bind:checked={config.animSub}>
-        Animation Sub
-    </label>
-</div>
+        {#if config.subgift}
+            <div>
+                <label>
+                    <input type=checkbox bind:checked={config.animSubGift}>
+                    Animation Sub Gift
+                </label>
+            </div>
+        {/if}
 
-<div>
-    <label>
-        <input type=checkbox bind:checked={config.animSubGift}>
-        Animation Sub Gift
-    </label>
-</div>
+        {#if config.cheer}
+            <div>
+                <label>
+                    <input type=checkbox bind:checked={config.animCheer}>
+                    Animation Cheer
+                </label>
+            </div>
+        {/if}
+    </div>
 
-<div>
-    <label>
-        <input type=checkbox bind:checked={config.animCheer}>
-        Animation Cheer
-    </label>
-</div>
-
-{#if chaine.length > 0}
-    <p>{urlGenerator}?chaine={chaine.join()}{config.message ? ("&message=true") : ("")}{config.subscription ? ("&subscription=true") : ("")}{config.deleted ? ("&deleted=true") : ("")}{config.subgift ? ("&subgift=true") : ("")}{config.cheer ? ("&cheer=true") : ("")}{config.ban ? ("&ban=true") : ("")}{config.timeout ? ("&timeout=true") : ("")}{config.dark ? ("&dark=true") : ("")}{config.avatar ? ("&avatar=true") : ("")}{config.animsub ? ("&animsub=true") : ("")}{config.animSubGift ? ("&animsubgift=true") : ("")}{config.animCheer ? ("&animcheer=true") : ("")}</p>
-{/if}
+    {#if chaine.length > 0}
+        <p>{urlGenerator}?chaine={chaine.join()}{config.message ? ("&message=true") : ("")}{config.subscription ? ("&subscription=true") : ("")}{config.deleted ? ("&deleted=true") : ("")}{config.subgift ? ("&subgift=true") : ("")}{config.cheer ? ("&cheer=true") : ("")}{config.ban ? ("&ban=true") : ("")}{config.timeout ? ("&timeout=true") : ("")}{config.dark ? ("&dark=true") : ("")}{config.avatar ? ("&avatar=true") : ("")}{config.animSub ? ("&animsub=true") : ("")}{config.animSubGift ? ("&animsubgift=true") : ("")}{config.animCheer ? ("&animcheer=true") : ("")}</p>
+    {/if}
+</main>
 
 <style>
     div{
-        border-bottom: 1px solid black;
+        /* border-bottom: 1px solid black; */
         color: #999CA0;
     }
 
@@ -179,5 +190,6 @@
 
     :global(body) {
 		background-color: #1F1F1F;
+        /* overflow:scroll; */
 	}
 </style>

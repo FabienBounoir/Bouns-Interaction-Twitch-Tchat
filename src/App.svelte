@@ -7,13 +7,13 @@
 
 <Router url="{url}">
     <div>
-        //route rendu de l'animation
-        <Route path="visuel" component="{Visuel}" /> 
+        <!-- route rendu de l'animation -->
+        <Route path="/visuel" component="{Visuel}" /> 
 
-        //route config
+        <!-- route config -->
         <Route path="/"><Home /></Route>
 
-        //route par defaut
+        <!-- route par defaut -->
         <Route path="/*"><Home /></Route>
     </div>
 </Router>
