@@ -57,19 +57,22 @@
     client.connect();
 
     //component tchat 
-    let image = [fete, hop, love, nice, yo, ah,]
-    let actualPicture = yo
+    let image = query?.customAvatar?.split(',') || [fete, hop, love, nice, yo, ah,]
+    console.log(image)
+    let actualPicture = query?.customAvatar?.split(',')[0] || yo
     let tchat = [];
 
     //frame de l'animation
     let frame;
-
     let timestamps = Date.now()
 
     //http://localhost:3000/index?chaine=lebouseuh,fruktozka,loeya,solaryfortnite,skyyart,ibai,thealvaro845,chess,pubg_battlegrounds,pubgkorea,joueur_du_grenier&subscription=true
 
     let confetti = []
     let timeout;
+
+    let tchatMax = query.maxDelete || 8
+    let timeMessage = parseInt(query.timeMessage) || 1000
 
     //remplace les text par les emotes correspondante
     function parseEmote(text, emotes)
@@ -125,16 +128,10 @@
     if(query.subscription === "true" || false)
     {
         client.on("subscription", (channel, username, method, message, userstate) => {
-            console.log("==============================")
-            console.log(username, method)
-            console.log(userstate)
-            console.log("==============================")
-
-           
             setAvatar(love)
             if(query.animsub === "true" || false)
             {
-                animation([bleucyan,bleuyellow,bleurouge,orange,vert,purple,rainbow,red,roseorange,violetcyan,violet,white,yellow], 100, 10000)
+                animation(query?.customSub?.split(',')  || [bleucyan,bleuyellow,bleurouge,orange,vert,purple,rainbow,red,roseorange,violetcyan,violet,white,yellow], 100, 10000)
             }
             push({message: `Merci pour le Sub @${username}`, name: "Sub", type: "sub"},10000)
         });
@@ -142,15 +139,9 @@
         client.on("resub", (channel, username, months, message, userstate, methods) => {
             setAvatar(fete)
 
-            console.log("==============================")
-            console.log(username, message)
-            console.log(userstate)
-            console.log(methods)
-            console.log("==============================")
-
             if(query.animsub === "true" || false)
             {
-                animation([bleucyan,bleuyellow,bleurouge,orange,vert,purple,rainbow,red,roseorange,violetcyan,violet,white,yellow], 100, 10000)
+                animation(query?.customSub?.split(',') || [bleucyan,bleuyellow,bleurouge,orange,vert,purple,rainbow,red,roseorange,violetcyan,violet,white,yellow], 100, 10000)
             }
             push({message: `Merci pour le resub @${username}`, name: `Resub ${userstate["msg-param-cumulative-months"]}eme mois`, type: "resub"}, 10000)
         });
@@ -182,7 +173,7 @@
             setAvatar(explosion)
             if(query.animsubgift === "true" || false)
             {
-                animation([bleucyan,bleuyellow,bleurouge,orange,vert,purple,rainbow,red,roseorange,violetcyan,violet,white,yellow], 100, 10000 * senderCount)
+                animation(query?.customSub?.split(',') || [bleucyan,bleuyellow,bleurouge,orange,vert,purple,rainbow,red,roseorange,violetcyan,violet,white,yellow], 100, 10000 * senderCount)
             }
             push({message: `Merci @${username} pour ${numbOfSubs > 1 ? (`les ${numbOfSubs} sub gift`) : ("le sub gift")}`, name: "Sub Gift", type: "sub"}, 1000 * senderCount > 60000 ? 60000 : (1000 * senderCount))
         });
@@ -227,19 +218,28 @@
         snack._id = v4();
         tchat = [...tchat, snack];
 
-        if(tchat.filter((s) => s.type == "tchat").length > 8)
+        if(tchat.filter((s) => s.type == "tchat").length > tchatMax)
         {
-            tchat = tchat.slice(tchat.length - 8)
+            tchat = tchat.slice(tchat.length - tchatMax)
         }
 
-		setTimeout(() => {
-			tchat = tchat.filter((s) => s._id !== snack._id);
-		}, time + 1000);
+        if(query.save == "true") return
+
+        setTimeout(() => {
+            tchat = tchat.filter((s) => s._id !== snack._id);
+        }, time + timeMessage);
 	};
 
     function setAvatar(avatar){
         timestamps = Date.now()
-        actualPicture = avatar
+        if(query?.customAvatar)
+        {
+            randomAvatar()
+        }
+        else
+        {
+            actualPicture = avatar
+        }
     }
 
     function randomAvatar(){
@@ -391,7 +391,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        /* background-image: url("../assets/background.png"); */
+        background-image: url("./assets/background.png");
         background-size: cover;
     }
 
@@ -437,7 +437,7 @@
     }
 
     .avatar img{
-        border-radius: 100px;
+        /* border-radius: 100px; */
         width: 10em;
     }
 
