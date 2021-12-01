@@ -176,14 +176,15 @@
         client.on("submysterygift", (channel, username, numbOfSubs, methods, userstate) => {
             let senderCount = ~~userstate["msg-param-sender-count"];
             console.log("Sub offert aleatoire")
+            console.log(userstate)
+            console.log(numbOfSubs)
 
-           
             setAvatar(explosion)
             if(query.animsubgift === "true" || false)
             {
                 animation([bleucyan,bleuyellow,bleurouge,orange,vert,purple,rainbow,red,roseorange,violetcyan,violet,white,yellow], 100, 10000 * senderCount)
             }
-            push({message: `Merci @${username} pour les ${senderCount} sub gift`, name: "Sub Gift", type: "sub"}, 1000 * senderCount > 60000 ? 60000 : (1000 * senderCount))
+            push({message: `Merci @${username} pour les ${numbOfSubs} sub gift`, name: "Sub Gift", type: "sub"}, 1000 * senderCount > 60000 ? 60000 : (1000 * senderCount))
         });
     }
 
@@ -231,9 +232,9 @@
             tchat = tchat.slice(tchat.length - 8)
         }
 
-		setTimeout(() => {
-			tchat = tchat.filter((s) => s._id !== snack._id);
-		}, time + 1000);
+		// setTimeout(() => {
+		// 	tchat = tchat.filter((s) => s._id !== snack._id);
+		// }, time + 1000);
 	};
 
     function setAvatar(avatar){
@@ -249,13 +250,13 @@
         }
     }
 
-    // push({message: `cououeeg`, type: "tchat"})
-    // push({message: `@BadbounsTV a été ban !`, name:"Ban", type: "ban"})
-    // push({message: `@BadbounsTV expulsé pour 120 secondes`, name:"Time Out", type: "ban"})
-    // push({message: `Merci pour le Sub @BadbounsTV`, name: "Sub", type: "sub"})
-    // push({message: `Merci pour le resub @BadbounsTV`, name: `Resub 12eme mois`, type: "resub"})
-    // push({message: `Merci @BadbounsTV pour les 12 subs gifts`, name: "Sub Gift", type: "sub"})
-    // push({message: `Attention à ton langage @Leskiel`, name:"Warning", type: "warning"})    
+    push({message: `cououeeg`, username:'BadbounsTV', type: "tchat"})
+    push({message: `@BadbounsTV a été ban !`, name:"Ban", type: "ban"})
+    push({message: `@BadbounsTV expulsé pour 120 secondes`, name:"Time Out", type: "ban"})
+    push({message: `Merci pour le Sub @BadbounsTV`, name: "Sub", type: "sub"})
+    push({message: `Merci pour le resub @BadbounsTV`, name: `Resub 12eme mois`, type: "resub"})
+    push({message: `Merci @BadbounsTV pour les 12 subs gifts`, name: "Sub Gift", type: "sub"})
+    push({message: `Attention à ton langage @Leskiel`, name:"Warning", type: "warning"})    
 
     //create animation
     function animation(characters, nbElement, time)
@@ -299,9 +300,9 @@
         {#each confetti as c}
             <img class="animationAvatar" style="left: {c.x}%; top: {c.y}%; transform: scale({c.r})" src={c.character} alt=" "/>
         {/each}
-        <div class="gridApp">
+        <div class="gridApp {query.left === "true" ? 'gridLeft' : 'gridRight'}">
             <div class="textfields" >
-                <ul>
+                <ul class="{query.left === "true" ? 'alignLeft' : 'alignRight'}">
                     {#each tchat as message (message._id)}
                     <li class="{query.dark === "true" ? 'dark' : 'white'}" in:scale="{{ delay: tchat.length ? (380) : (0), duration: tchat.length > 3 ? (tchat.length > 6 ? (tchat.length > 9 ? (0) : (100)) : (250)) : (500) }}" out:slide>
                         {#if message.type == "tchat"}
@@ -400,23 +401,35 @@
 
     .gridApp{
         display: grid;
-        /* grid-template-areas: "text avatar"; */
-        grid-template-columns: 1fr 0.1fr;
+        grid-template-areas: "text avatar";
+        /* grid-template-columns: 1fr 0.1fr; */
         position: absolute;
+    }
+
+    .gridRight {
+        grid-template-areas: "text avatar";
         right: 0;
         bottom: 0;
     }
 
+    .gridLeft {
+        grid-template-areas: "avatar text";
+        left: 0;
+        bottom: 0;
+    }
+
     .textfields {
-        padding: 3em 3em 0em 3em;
-        margin: -3em -4em 0em -3em;
+        /* padding: 3em 3em 0em 3em;
+        margin: -3em -4em 0em -3em; */
 
         overflow: hidden; 
         overflow-y: auto; 
+        grid-area: text;
     }
 
     .avatar {
         place-self: flex-end;
+        grid-area: avatar;
     }
 
     .none{
@@ -469,8 +482,12 @@
         background: rgba(175, 77, 253, 0.7);
     }
 
-    ul{
+    .alignRight{
         text-align: -webkit-right;
+    }
+
+    .alignLeft{
+        text-align: -webkit-left;
     }
 
     li{
@@ -498,13 +515,14 @@
         color: #fff;
         border: 1px solid rgba( 255, 255, 255, 0.30 );
         background: rgba( 255, 255, 255, 0.25 );
-        box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+        box-shadow: 0 8px 12px 0 rgba( 31, 38, 135, 0.37 );
         text-shadow: 0 2px 4px rgb(71 97 206 / 36%);
     }
 
     .dark {
         color: #101010;
         border: 1px solid rgba(0, 0, 0, 0.3);
+        box-shadow: 0 8px 12px 0 rgba( 31, 38, 135, 0.37 );
         text-shadow: 0 2px 4px rgb(150 155 176 / 36%);
         background: rgb(44, 40, 40, 0.25);
     }
@@ -531,18 +549,5 @@
     .emote{
         width: 1.5em;
     }
-
-    @keyframes disparition {
-    0% {
-        opacity: 1;
-    }
-    90% {
-        opacity: 1;
-    }
-    100% {
-        opacity: 0;
-        display: none;
-    }
-}
 
 </style>
