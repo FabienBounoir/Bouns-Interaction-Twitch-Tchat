@@ -173,7 +173,7 @@
             setAvatar(explosion)
             if(query.animsubgift === "true" || false)
             {
-                animation(query?.customSub?.split(',') || [bleucyan,bleuyellow,bleurouge,orange,vert,purple,rainbow,red,roseorange,violetcyan,violet,white,yellow], 100, 10000 * senderCount)
+                animation(query?.customSubGif?.split(',') || [bleucyan,bleuyellow,bleurouge,orange,vert,purple,rainbow,red,roseorange,violetcyan,violet,white,yellow], 100, 10000 * senderCount)
             }
             push({message: `Merci @${username} pour ${numbOfSubs > 1 ? (`les ${numbOfSubs} sub gift`) : ("le sub gift")}`, name: "Sub Gift", type: "sub"}, 1000 * senderCount > 60000 ? 60000 : (1000 * senderCount))
         });
@@ -187,7 +187,7 @@
 
             if(query.animcheer === "true" || false)
             {
-                animation([bits], 100, 10000)
+                animation(query?.customCheers?.split(',') || [bits], 100, 10000)
             }
 
             push({message: `Merci ${userstate["display-name"]} pour les ${userstate.bits} Bits`, name: "Bits", type: "cheers"}, 10000)
