@@ -58,7 +58,6 @@
 
     //component tchat 
     let image = query?.customAvatar?.split(',') || [fete, hop, love, nice, yo, ah,]
-    console.log(image)
     let actualPicture = query?.customAvatar?.split(',')[0] || yo
     let tchat = [];
 
@@ -109,11 +108,11 @@
 
             if(tags.emotes == null)
             {
-                push({message: `${message}`, username:tags.username, type: "tchat"},10000)
+                push({message: `${message}`, username:tags["display-name"], type: "tchat"},15000)
             }
             else
             {
-                push({message: `${parseEmote(message, tags.emotes)}`, username:tags.username, type: "tchat"})
+                push({message: `${parseEmote(message, tags.emotes)}`, username:tags["display-name"], type: "tchat"},15000)
             }
 
             if(tchat.length == 0)
@@ -131,9 +130,9 @@
             setAvatar(love)
             if(query.animsub === "true" || false)
             {
-                animation(query?.customSub?.split(',')  || [bleucyan,bleuyellow,bleurouge,orange,vert,purple,rainbow,red,roseorange,violetcyan,violet,white,yellow], 100, 10000)
+                animation(query?.customSub?.split(',')  || [bleucyan,bleuyellow,bleurouge,orange,vert,purple,rainbow,red,roseorange,violetcyan,violet,white,yellow], 100, 20000)
             }
-            push({message: `Merci pour le Sub @${username}`, name: "Sub", type: "sub"},10000)
+            push({message: `Merci pour le Sub @${username}`, name: "Sub", type: "sub"},30000)
         });
 
         client.on("resub", (channel, username, months, message, userstate, methods) => {
@@ -141,9 +140,9 @@
 
             if(query.animsub === "true" || false)
             {
-                animation(query?.customSub?.split(',') || [bleucyan,bleuyellow,bleurouge,orange,vert,purple,rainbow,red,roseorange,violetcyan,violet,white,yellow], 100, 10000)
+                animation(query?.customSub?.split(',') || [bleucyan,bleuyellow,bleurouge,orange,vert,purple,rainbow,red,roseorange,violetcyan,violet,white,yellow], 100, 20000)
             }
-            push({message: `Merci pour le resub @${username}`, name: `Resub ${userstate["msg-param-cumulative-months"]}eme mois`, type: "resub"}, 10000)
+            push({message: `Merci pour le resub @${username}`, name: `Resub ${userstate["msg-param-cumulative-months"]}eme mois`, type: "resub"}, 30000)
         });
     }
 
@@ -166,31 +165,25 @@
 
         client.on("submysterygift", (channel, username, numbOfSubs, methods, userstate) => {
             let senderCount = ~~userstate["msg-param-sender-count"];
-            console.log("Sub offert aleatoire")
-            console.log(userstate)
-            console.log(numbOfSubs)
 
             setAvatar(explosion)
             if(query.animsubgift === "true" || false)
             {
-                animation(query?.customSubGif?.split(',') || [bleucyan,bleuyellow,bleurouge,orange,vert,purple,rainbow,red,roseorange,violetcyan,violet,white,yellow], 100, 10000 * senderCount)
+                animation(query?.customSubGif?.split(',') || [bleucyan,bleuyellow,bleurouge,orange,vert,purple,rainbow,red,roseorange,violetcyan,violet,white,yellow], 100, 10000 * numbOfSubs)
             }
-            push({message: `Merci @${username} pour ${numbOfSubs > 1 ? (`les ${numbOfSubs} sub gift`) : ("le sub gift")}`, name: "Sub Gift", type: "sub"}, 1000 * senderCount > 60000 ? 60000 : (1000 * senderCount))
+            push({message: `Merci @${username} pour ${numbOfSubs > 1 ? (`les ${numbOfSubs} sub gift`) : ("le sub gift")}`, name: "Sub Gift", type: "sub"}, 1000 * numbOfSubs > 60000 ? 60000 : (5000 * numbOfSubs))
         });
     }
 
     if(query.cheer === "true" || false)
     {
         client.on("cheer", (channel, userstate, message) => {
-
-            console.log(userstate)
-
             if(query.animcheer === "true" || false)
             {
                 animation(query?.customCheers?.split(',') || [bits], 100, 10000)
             }
 
-            push({message: `Merci ${userstate["display-name"]} pour les ${userstate.bits} Bits`, name: "Bits", type: "cheers"}, 10000)
+            push({message: `Merci ${userstate["display-name"]} pour les ${userstate.bits} Bits`, name: "Bits", type: "cheers"}, userstate.bits < 99 ? (1000) : (userstate.bits < 1000 ? (5000) : (userstate.bits < 4999 ? (15000) : (userstate.bits * 3.5))) )
         });
     }
 
@@ -493,8 +486,11 @@
     li{
         list-style-type: none;
 
-        backdrop-filter: blur( 6px );
-        -webkit-backdrop-filter: blur( 6px );
+        /* backdrop-filter: blur( 6px );
+        -webkit-backdrop-filter: blur( 6px ); */
+
+        background-color: rgb(176, 158, 149);
+
         margin: 10px;
         font-style: normal;
         font-weight: 300;
@@ -514,17 +510,22 @@
     .white {
         color: #fff;
         border: 1px solid rgba( 255, 255, 255, 0.30 );
-        background: rgba( 255, 255, 255, 0.25 );
+        background: rgba(218, 218, 218, 0.6);
+        /* background: rgba( 176, 158, 149, 0.95 ); */
         box-shadow: 0 8px 12px 0 rgba( 31, 38, 135, 0.37 );
-        text-shadow: 0 2px 4px rgb(71 97 206 / 36%);
+        text-shadow: 0 2px 4px rgb(0 0 0 / 66%); 
+        /* text-shadow: 0 2px 4px rgb(71 97 206 / 36%);  */
     }
 
     .dark {
         color: #101010;
         border: 1px solid rgba(0, 0, 0, 0.3);
         box-shadow: 0 8px 12px 0 rgba( 31, 38, 135, 0.37 );
-        text-shadow: 0 2px 4px rgb(150 155 176 / 36%);
-        background: rgb(44, 40, 40, 0.25);
+        /* text-shadow: 0 2px 4px rgb(150 155 176 / 36%); */
+        /* background: rgb(44, 40, 40, 0.25); */
+
+        text-shadow: 0 1px 4px rgb(150 155 176 / 76%);
+        background: rgb(44, 40, 40, 0.6);
     }
 
     li p{
