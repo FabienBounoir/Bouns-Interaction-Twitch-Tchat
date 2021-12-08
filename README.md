@@ -3,7 +3,7 @@
 
 [![forthebadge](http://forthebadge.com/images/badges/built-with-love.svg)](http://forthebadge.com)  [![forthebadge](https://forthebadge.com/images/badges/made-with-javascript.svg)](http://forthebadge.com)
 
-Projet permettant d'afficher les informations provenant d'un Tchat Twitch que se sois:
+Projet permettant d'afficher les informations provenant d'un Tchat Twitch que se soit:
 - Les messages
 - Les Subs
 - Les Subs gift
@@ -12,7 +12,7 @@ Projet permettant d'afficher les informations provenant d'un Tchat Twitch que se
 - Les Time Out
 - ...
 
-Ce projet a été realisé pour etre intégré dans une source navigateur sur OBS Studio, Streamlabs, ...
+Ce projet a été realisé pour être intégré dans une source navigateur sur OBS Studio, Streamlabs, ...
 
 ### aperçus
 
@@ -21,12 +21,11 @@ Ce projet a été realisé pour etre intégré dans une source navigateur sur OB
 
 ## Comment le tester ?
 
-Pour le tester rien de plus simple il suffit de se rendre sur [La page de configuration](https://fabienbounoir.github.io/Bouns-Interative-tchat-config)
+Pour le tester rien de plus simple il suffit de se rendre sur [La page de configuration](https://fabienbounoir.github.io/Bouns-interactive-tchat-config)
 
 ### Pré-requis
 
 - Avoir une chaine Twitch
-
 
 ## Fabriqué avec
 
@@ -38,5 +37,5 @@ Pour le tester rien de plus simple il suffit de se rendre sur [La page de config
 **Dernière version :** 1.0
 
 ## Auteurs
-Listez le(s) auteur(s) du projet ici !
+
 * [@FabienBounoir](https://github.com/FabienBounoir)
