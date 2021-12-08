@@ -218,6 +218,8 @@
 
         if(query.save == "true") return
 
+        console.log(tchat.length)
+
         setTimeout(() => {
             tchat = tchat.filter((s) => s._id !== snack._id);
         }, time + timeMessage);
@@ -297,9 +299,9 @@
             <div class="textfields" >
                 <ul class="{query.left === "true" ? 'alignLeft' : 'alignRight'}">
                     {#each tchat as message (message._id)}
-                    <li class="{query.dark === "true" ? 'dark' : 'white'}" in:scale="{{ delay: tchat.length ? (380) : (0), duration: tchat.length > 3 ? (tchat.length > 6 ? (tchat.length > 9 ? (0) : (100)) : (250)) : (500) }}" out:slide>
+                    <li class="{query.rgb === "true" ? 'rgb' : 'white'} {query.dark === "true" ? 'dark' : 'white'}" in:scale="{{ delay: tchat.length ? (380) : (0), duration: tchat.length > 3 ? (tchat.length > 6 ? (tchat.length >= tchatMax - 1 ? (100) : (100)) : (250)) : (500) }}" out:slide>
                         {#if message.type == "tchat"}
-                            <p in:fade="{{ duration: tchat.length > 3 ? (tchat.length > 6 ? (tchat.length > 9 ? (0) : (50)) : (100)) : (200) }}"><b>{message.username}:&nbsp;</b>{@html message.message} </p>
+                            <p in:fade="{{ duration: tchat.length > 3 ? (tchat.length > 6 ? (tchat.length >= tchatMax - 1 ? (0) : (50)) : (100)) : (200) }}"><b>{message.username}:&nbsp;</b>{@html message.message} </p>
                         {/if}
                         {#if message.type == "ban"}
                             <div in:fade="{{ duration: 200 }}" class="Embed">
@@ -384,7 +386,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        /* background-image: url("./assets/background.png"); */
+        background-image: url("./assets/background.png");
         background-size: cover;
     }
 
@@ -493,7 +495,7 @@
 
         margin: 10px;
         font-style: normal;
-        font-weight: 300;
+        font-weight: 500;
         font-size: 20px;
         line-height: 23px;
 
@@ -510,27 +512,70 @@
     .white {
         color: #fff;
         border: 1px solid rgba( 255, 255, 255, 0.30 );
-        background: rgba(218, 218, 218, 0.6);
-        /* background: rgba( 176, 158, 149, 0.95 ); */
+        /* background: rgba(218, 218, 218, 0.6); */
+        background: rgba(199, 199, 199, 0.646);
         box-shadow: 0 8px 12px 0 rgba( 31, 38, 135, 0.37 );
         text-shadow: 0 2px 4px rgb(0 0 0 / 66%); 
         /* text-shadow: 0 2px 4px rgb(71 97 206 / 36%);  */
     }
 
+    .rgb {
+        color: #fff;
+        border: 1px solid rgba( 255, 255, 255, 0.30 );
+        /* background: rgba(218, 218, 218, 0.6); */
+        background: rgba(199, 199, 199, 0.646);
+        box-shadow: 0 8px 12px 0 rgba( 31, 38, 135, 0.37 );
+        text-shadow: 0 2px 4px rgb(0 0 0 / 66%); 
+        background-color: rgba(255, 0, 0, 0.6);
+        animation: RGBWhiteMode 5s infinite linear;
+        }
+    
+        @keyframes RGBWhiteMode {
+            0% {
+            background-color: rgba(193, 0, 0, 0.6);
+            }  
+            12.5% {
+            background-color: rgba(176, 58, 46, 0.6);
+            }
+            25% {
+            background-color: rgba(175, 96, 26, 0.6);
+            }
+            37.5% {
+            background-color: rgba(183, 149, 11, 0.6);
+            }
+            50% {
+            background-color: rgba(35, 155, 86, 0.6);
+            }
+            62.5% {
+            background-color: rgba(40, 116, 166, 0.6);
+            }
+            75% {
+            background-color: rgba(31, 97, 141, 0.6);
+            }
+            87.5% {
+            background-color: rgba(108, 52, 131, 0.6);
+            }
+            100% {
+            background-color: rgba(193, 0, 0, 0.6);
+            }
+        }
+
     .dark {
-        color: #101010;
+        /* color: #101010; */
         border: 1px solid rgba(0, 0, 0, 0.3);
         box-shadow: 0 8px 12px 0 rgba( 31, 38, 135, 0.37 );
         /* text-shadow: 0 2px 4px rgb(150 155 176 / 36%); */
         /* background: rgb(44, 40, 40, 0.25); */
 
-        text-shadow: 0 1px 4px rgb(150 155 176 / 76%);
+        /* text-shadow: 0 1px 4px rgb(150 155 176 / 76%); */
         background: rgb(44, 40, 40, 0.6);
+        color: #e3dfdf;
+        /* background: rgb(100, 100, 100, 0.8); */
     }
 
     li p{
         margin: 10px 20px 10px 20px;
-        font-weight: 300;
+        font-weight: 350;
         align-items: center;
         display: flex;
     }
