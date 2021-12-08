@@ -70,8 +70,8 @@
     let confetti = []
     let timeout;
 
-    let tchatMax = query.maxDelete || 8
-    let timeMessage = parseInt(query.timeMessage) || 1000
+    let tchatMax = parseInt(query.maxdelete) || 8
+    let timeMessage = parseInt(query.timemessage) || 1000
 
     //remplace les text par les emotes correspondante
     function parseEmote(text, emotes)
