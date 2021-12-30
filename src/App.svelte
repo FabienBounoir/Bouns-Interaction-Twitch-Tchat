@@ -504,10 +504,16 @@
 
         text-align: right;
 
-        transform-origin: bottom right;
-
         border-radius: 10px;
     } 
+
+    .alignLeft li{
+        transform-origin: bottom left;
+    }
+
+    .alignRight li{
+        transform-origin: bottom right;
+    }
 
     .white {
         color: #fff;
