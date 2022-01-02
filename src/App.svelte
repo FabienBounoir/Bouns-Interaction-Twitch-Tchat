@@ -41,6 +41,8 @@
         return a
     }, {})
 
+    console.log(query)
+
     // @ts-ignore
     //init client connection
     const client = new tmi.Client({
@@ -87,7 +89,7 @@
                     var length =  mote[1] - mote[0],
                         empty = Array.apply(null, new Array(length + 1)).map(function() { return '' });
                     splitText = splitText.slice(0, mote[0]).concat(empty).concat(splitText.slice(mote[1] + 1, splitText.length));
-                    splitText.splice(mote[0], 1, '<img class="emote" style="width: 1.5em;"  src="http://static-cdn.jtvnw.net/emoticons/v1/' + i + '/3.0" alt="'+ i +'">');
+                    splitText.splice(mote[0], 1, '<img class="emote" style="width: 1.5em;"  src="http://static-cdn.jtvnw.net/emoticons/v2/' + i + '/default/dark/3.0" alt="'+ i +'">');
                 }
             }
         }
@@ -98,6 +100,13 @@
     {
         client.on('message', (channel, tags, message, self) => {
             if(tags['message-type'] == "whisper") return
+
+            console.log(query?.blacklist?.split(','))
+            console.log(tags["display-name"].toLowerCase())
+
+            console.log(query?.blacklist?.split(',').includes(tags["display-name"].toLowerCase()))
+
+            if(query?.blacklist?.split(',').includes(tags["display-name"].toLowerCase())) return
 
             // if(message.length > 75) return
 
@@ -502,17 +511,18 @@
         width: max-content;
         max-width: 25em;
 
-        text-align: right;
 
         border-radius: 10px;
     } 
 
     .alignLeft li{
         transform-origin: bottom left;
+        text-align: left;
     }
 
     .alignRight li{
         transform-origin: bottom right;
+        text-align: right;
     }
 
     .white {
