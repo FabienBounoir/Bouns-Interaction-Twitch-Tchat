@@ -150,25 +150,18 @@
                 randomAvatar();
             }
 
-            if (tags.emotes == null) {
-                push(
-                    {
-                        message: `${message}`,
-                        username: tags["display-name"],
-                        type: "tchat",
-                    },
-                    15000
-                );
-            } else {
-                push(
-                    {
-                        message: `${parseEmote(message, tags.emotes)}`,
-                        username: tags["display-name"],
-                        type: "tchat",
-                    },
-                    15000
-                );
+            if (message.includes("<") && (tags["display-name"].toLowerCase() != "badbounstv")) {
+                message = message.replace(/<(?:.|\n)*?>/gm, "***");
             }
+
+            push(
+                {
+                    message: `${tags.emotes == null ? (message) : (parseEmote(message, tags.emotes))}`,
+                    username: tags["display-name"],
+                    type: "tchat",
+                },
+                15000
+            );
 
             if (tchat.length == 0) {
                 setTimeout(() => {
@@ -385,8 +378,6 @@
         }
 
         if (query.save == "true") return;
-
-        console.log(tchat.length);
 
         setTimeout(() => {
             tchat = tchat.filter((s) => s._id !== snack._id);
