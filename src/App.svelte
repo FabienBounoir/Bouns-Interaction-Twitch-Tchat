@@ -150,8 +150,11 @@
                 randomAvatar();
             }
 
-            if (message.includes("<") && (tags["display-name"].toLowerCase() != "badbounstv")) {
-                message = message.replace(/<(?:.|\n)*?>/gm, "***");
+            if ((message.includes("<") && message.includes(">"))) {
+                if(tags["display-name"].toLowerCase() != "badbounstv")
+                {
+                    message = message.replace(/</gm, "< ");
+                }
             }
 
             push(
