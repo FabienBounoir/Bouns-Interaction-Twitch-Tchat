@@ -1,6 +1,6 @@
 <script>
     import { fade, scale, slide } from "svelte/transition";
-    import { onMount } from "svelte";
+    import { quintOut } from "svelte/easing";
     import { v4 } from "uuid";
 
     import agacer from "./assets/animation/agacer.png";
@@ -30,6 +30,10 @@
     import white from "./assets/logo/logo-white.png";
     import yellow from "./assets/logo/logo-yellow.png";
     import bits from "./assets/bits.gif";
+
+    let asVideo = false;
+    let lienVideo = "";
+    const regexClip = new RegExp('(?:https:\/\/)?clips\.twitch\.tv\/')
 
     //get query in Url
     let query = {};
@@ -125,7 +129,7 @@
     }
 
     if (query.message === "true" || false) {
-        client.on("message", (channel, tags, message, self) => {
+        client.on("message", async (channel, tags, message, self) => {
             if (tags["message-type"] == "whisper") return;
 
             console.log(query?.blacklist?.split(","));
@@ -137,14 +141,7 @@
                     .includes(tags["display-name"].toLowerCase())
             );
 
-            if (
-                query?.blacklist
-                    ?.split(",")
-                    .includes(tags["display-name"].toLowerCase())
-            )
-                return;
-
-            // if(message.length > 75) return
+            if (query?.blacklist?.split(",").includes(tags["display-name"].toLowerCase())) return;
 
             if (tchat.length != 0) {
                 randomAvatar();
@@ -154,6 +151,33 @@
                 if(tags["display-name"].toLowerCase() != "badbounstv")
                 {
                     message = message.replace(/</gm, "< ");
+                }
+            }
+
+            if(regexClip.test(message))
+            {
+                if(asVideo) 
+                {
+                    asVideo = false
+                    lienVideo = ""
+                }
+
+                const id = message.split("clips.twitch.tv/")[1]
+                const test= "https://cy49zmt23f.execute-api.us-east-1.amazonaws.com/dev/download_clip?id=" + id
+
+                try {
+                    const data = await fetch(test).then(response => response.json())
+                    message =  "🎬 " + data.data[0].title;
+    
+                    console.log(channel)
+                    console.log(data.data[0].broadcaster_name.toLowerCase())
+                    if((channel == "#badbounstv" && channel == "#"+ data.data[0].broadcaster_name.toLowerCase()) && query.clip === "true")
+                    {
+                        lienVideo = data.data[0].thumbnail_url.split("-preview")[0] + ".mp4";
+                        asVideo = true;
+                    }
+                } catch (erreur) {
+                    console.log(erreur)
                 }
             }
 
@@ -561,6 +585,11 @@
             </div>
         </div>
     </div>
+    {#if asVideo}
+    <video class="videoClip" muted autoplay transition:scale={{  duration: 1000, easing: quintOut }} on:error={() => asVideo = false} on:ended={() => asVideo = false}>
+        <source src={lienVideo} type="video/mp4">
+    </video>
+{/if}
 </main>
 
 <style>
@@ -585,6 +614,17 @@
     .animationAvatar {
         position: absolute;
         user-select: none;
+    }
+
+    .videoClip {
+        position: fixed;
+        top: 20;
+        left: 20;
+        width: 30%;
+        object-fit: cover;
+        z-index: -1;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     }
 
     div#saver {
