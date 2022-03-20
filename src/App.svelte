@@ -586,7 +586,7 @@
         </div>
     </div>
     {#if asVideo}
-    <video class="videoClip" muted autoplay transition:scale={{  duration: 1000, easing: quintOut }} on:error={() => asVideo = false} on:ended={() => asVideo = false}>
+    <video class="videoClip" autoplay transition:scale={{  duration: 1000, easing: quintOut }} on:error={() => asVideo = false} on:ended={() => asVideo = false}>
         <source src={lienVideo} type="video/mp4">
     </video>
 {/if}
