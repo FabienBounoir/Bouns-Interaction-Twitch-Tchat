@@ -33,7 +33,7 @@
 
     let asVideo = false;
     let lienVideo = "";
-    const regexClip = new RegExp('(?:https:\/\/)?clips\.twitch\.tv\/')
+    const regexClip = new RegExp("(?:https://)?clips.twitch.tv/");
 
     //get query in Url
     let query = {};
@@ -80,6 +80,9 @@
 
     //http://localhost:3000/index?chaine=lebouseuh,fruktozka,loeya,solaryfortnite,skyyart,ibai,thealvaro845,chess,pubg_battlegrounds,pubgkorea,joueur_du_grenier&subscription=true
 
+    let theme = query.theme || "white";
+    console.log(theme);
+
     let confetti = [];
     let timeout;
 
@@ -116,11 +119,11 @@
                     splitText.splice(
                         mote[0],
                         1,
-                        '<img class="emote" style="width: 1.5em;"  src="http://static-cdn.jtvnw.net/emoticons/v2/' +
+                        '<span ><img class="emote" style="width: 1.5em; vertical-align: bottom;"  src="http://static-cdn.jtvnw.net/emoticons/v2/' +
                             i +
                             '/default/dark/3.0" alt="' +
                             i +
-                            '">'
+                            '"></span>'
                     );
                 }
             }
@@ -141,49 +144,65 @@
                     .includes(tags["display-name"].toLowerCase())
             );
 
-            if (query?.blacklist?.split(",").includes(tags["display-name"].toLowerCase())) return;
+            if (
+                query?.blacklist
+                    ?.split(",")
+                    .includes(tags["display-name"].toLowerCase())
+            )
+                return;
 
             if (tchat.length != 0) {
                 randomAvatar();
             }
 
-            if ((message.includes("<") && message.includes(">"))) {
-                if(tags["display-name"].toLowerCase() != "badbounstv")
-                {
+            if (message.includes("<") && message.includes(">")) {
+                if (tags["display-name"].toLowerCase() != "badbounstv") {
                     message = message.replace(/</gm, "< ");
                 }
             }
 
-            if(regexClip.test(message))
-            {
-                if(asVideo) 
-                {
-                    asVideo = false
-                    lienVideo = ""
+            if (regexClip.test(message)) {
+                if (asVideo) {
+                    asVideo = false;
+                    lienVideo = "";
                 }
 
-                const id = message.split("clips.twitch.tv/")[1]
-                const test= "https://cy49zmt23f.execute-api.us-east-1.amazonaws.com/dev/download_clip?id=" + id
+                const id = message.split("clips.twitch.tv/")[1];
+                const test =
+                    "https://cy49zmt23f.execute-api.us-east-1.amazonaws.com/dev/download_clip?id=" +
+                    id;
 
                 try {
-                    const data = await fetch(test).then(response => response.json())
-                    message =  "🎬 " + data.data[0].title;
-    
-                    console.log(channel)
-                    console.log(data.data[0].broadcaster_name.toLowerCase())
-                    if((channel == "#badbounstv" && channel == "#"+ data.data[0].broadcaster_name.toLowerCase()) && query.clip === "true")
-                    {
-                        lienVideo = data.data[0].thumbnail_url.split("-preview")[0] + ".mp4";
+                    const data = await fetch(test).then((response) =>
+                        response.json()
+                    );
+                    message = "🎬 " + data.data[0].title;
+
+                    console.log(channel);
+                    console.log(data.data[0].broadcaster_name.toLowerCase());
+                    if (
+                        channel == "#badbounstv" &&
+                        channel ==
+                            "#" + data.data[0].broadcaster_name.toLowerCase() &&
+                        query.clip === "true"
+                    ) {
+                        lienVideo =
+                            data.data[0].thumbnail_url.split("-preview")[0] +
+                            ".mp4";
                         asVideo = true;
                     }
                 } catch (erreur) {
-                    console.log(erreur)
+                    console.log(erreur);
                 }
             }
 
             push(
                 {
-                    message: `${tags.emotes == null ? (message) : (parseEmote(message, tags.emotes))}`,
+                    message: `${
+                        tags.emotes == null
+                            ? message
+                            : parseEmote(message, tags.emotes)
+                    }`,
                     username: tags["display-name"],
                     type: "tchat",
                 },
@@ -492,11 +511,7 @@
                 <ul class={query.left === "true" ? "alignLeft" : "alignRight"}>
                     {#each tchat as message (message._id)}
                         <li
-                            class="{query.rgb === 'true'
-                                ? 'rgb'
-                                : 'white'} {query.dark === 'true'
-                                ? 'dark'
-                                : 'white'}"
+                            class={theme}
                             in:scale={{
                                 duration:
                                     tchat.length > 3
@@ -586,10 +601,16 @@
         </div>
     </div>
     {#if asVideo}
-    <video class="videoClip" autoplay transition:scale={{  duration: 1000, easing: quintOut }} on:error={() => asVideo = false} on:ended={() => asVideo = false}>
-        <source src={lienVideo} type="video/mp4">
-    </video>
-{/if}
+        <video
+            class="videoClip"
+            autoplay
+            transition:scale={{ duration: 1000, easing: quintOut }}
+            on:error={() => (asVideo = false)}
+            on:ended={() => (asVideo = false)}
+        >
+            <source src={lienVideo} type="video/mp4" />
+        </video>
+    {/if}
 </main>
 
 <style>
@@ -776,6 +797,20 @@
         /* text-shadow: 0 2px 4px rgb(71 97 206 / 36%);  */
     }
 
+    .flatwhite {
+        color: black;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        background: white;
+        box-shadow: 0 5px 8px 0 rgb(31 38 135 / 37%);
+    }
+
+    .flatdark {
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        background: black;
+        box-shadow: 0 5px 8px 0 rgb(31 38 135 / 37%);
+    }
+
     .rgb {
         color: #fff;
         border: 1px solid rgba(255, 255, 255, 0.3);
@@ -834,6 +869,7 @@
         margin: 10px 20px 10px 20px;
         font-weight: 350;
         align-items: center;
+        word-wrap: break-word;
         /* display: flex; */
     }
 
