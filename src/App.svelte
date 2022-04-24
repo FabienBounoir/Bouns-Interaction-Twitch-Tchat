@@ -35,6 +35,17 @@
     let lienVideo = "";
     const regexClip = new RegExp("(?:https://)?clips.twitch.tv/");
 
+    let arrayBadge = [];
+
+    //fetch badge twitch
+    const fetchBadge = async () => {
+        const response = await fetch(
+            "https://badges.twitch.tv/v1/badges/global/display?language=fr"
+        );
+        const data = await response.json();
+        arrayBadge = data.badge_sets;
+    };
+
     //get query in Url
     let query = {};
 
@@ -46,6 +57,10 @@
     }, {});
 
     console.log(query);
+
+    if (query.badge) {
+        fetchBadge();
+    }
 
     // @ts-ignore
     //init client connection
@@ -135,14 +150,26 @@
         client.on("message", async (channel, tags, message, self) => {
             if (tags["message-type"] == "whisper") return;
 
-            console.log(query?.blacklist?.split(","));
-            console.log(tags["display-name"].toLowerCase());
+            let tagsUrl = [];
 
-            console.log(
-                query?.blacklist
-                    ?.split(",")
-                    .includes(tags["display-name"].toLowerCase())
-            );
+            if (query.badge) {
+                for (let badge of Object.keys(tags["badges"])) {
+                    const versionBadge = arrayBadge[badge];
+
+                    if (badge == "subscriber") {
+                        tagsUrl.push(
+                            "https://static-cdn.jtvnw.net/badges/v1/5d9f2208-5dd8-11e7-8513-2ff4adfae661/3"
+                        );
+                    } else {
+                        let badgetversion =
+                            versionBadge.versions[tags["badges"][badge]][
+                                "image_url_4x"
+                            ];
+                        if (!badgetversion) continue;
+                        tagsUrl.push(badgetversion);
+                    }
+                }
+            }
 
             if (
                 query?.blacklist
@@ -205,6 +232,7 @@
                     }`,
                     username: tags["display-name"],
                     type: "tchat",
+                    tagsUrl,
                 },
                 15000
             );
@@ -501,11 +529,8 @@
             />
         {/each}
         <div
-            class="gridApp {query.left === 'true'
-                ? 'gridLeft'
-                : 'gridRight'} {query.leskiel === 'true'
-                ? 'leskielTemplate'
-                : ''}"
+            class="gridApp {query.left === 'true' ? 'gridLeft' : 'gridRight'}"
+            style="margin-bottom: {query.mbottom}; margin-top: {query.mtop}; margin-left: {query.mleft}; margin-right: {query.mright}"
         >
             <div class="textfields">
                 <ul class={query.left === "true" ? "alignLeft" : "alignRight"}>
@@ -538,6 +563,13 @@
                                                 : 200,
                                     }}
                                 >
+                                    {#each message.tagsUrl as badge (badge)}
+                                        <img
+                                            src={badge}
+                                            alt=" "
+                                            class="badge"
+                                        />
+                                    {/each}
                                     <b>{message.username}:&nbsp;</b
                                     >{@html message.message}
                                 </p>
@@ -669,10 +701,6 @@
         position: absolute;
     }
 
-    .leskielTemplate {
-        margin-bottom: 55px;
-    }
-
     .gridRight {
         grid-template-areas: "text avatar";
         right: 0;
@@ -763,7 +791,7 @@
         /* backdrop-filter: blur( 6px );
         -webkit-backdrop-filter: blur( 6px ); */
 
-        background-color: rgb(176, 158, 149);
+        /* background-color: rgb(176, 158, 149); */
 
         margin: 10px;
         font-style: normal;
@@ -809,6 +837,46 @@
         border: 1px solid rgba(255, 255, 255, 0.3);
         background: black;
         box-shadow: 0 5px 8px 0 rgb(31 38 135 / 37%);
+    }
+
+    .linearrgb {
+        color: white;
+        border: 1px solid rgb(255, 255, 255);
+        background: linear-gradient(
+            -45deg,
+            rgba(238, 118, 82, 0.85),
+            rgba(231, 60, 126, 0.85),
+            rgba(35, 165, 213, 0.85),
+            rgba(35, 213, 171, 0.85)
+        );
+        background-size: 400% 400%;
+        animation: gradient 15s ease infinite;
+        box-shadow: 0 5px 8px 0 rgb(31 38 135 / 37%);
+    }
+
+    .bluepurple {
+        color: white;
+        border: 1px solid rgba(11, 4, 213, 0.731);
+        background: linear-gradient(
+            -45deg,
+            rgba(35, 165, 213, 0.85),
+            rgba(148, 35, 213, 0.85)
+        );
+        background-size: 400% 400%;
+        animation: gradient 7s ease infinite;
+        box-shadow: 0 5px 8px 0 rgb(31 38 135 / 37%);
+    }
+
+    @keyframes gradient {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
     }
 
     .rgb {
@@ -887,5 +955,9 @@
 
     .emote {
         width: 1.5em;
+    }
+
+    .badge {
+        width: 0.9em;
     }
 </style>
