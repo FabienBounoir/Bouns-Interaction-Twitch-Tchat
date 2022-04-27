@@ -863,8 +863,8 @@
         border: 1px solid rgba(11, 4, 213, 0.731);
         background: linear-gradient(
             -45deg,
-            rgba(35, 165, 213, 0.85),
-            rgba(148, 35, 213, 0.85)
+            rgba(35, 165, 213, 0.7),
+            rgba(148, 35, 213, 0.7)
         );
         background-size: 400% 400%;
         animation: gradient 7s ease infinite;
