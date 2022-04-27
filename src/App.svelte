@@ -152,21 +152,25 @@
 
             let tagsUrl = [];
 
-            if (query.badge) {
-                for (let badge of Object.keys(tags["badges"])) {
-                    const versionBadge = arrayBadge[badge];
+            // console.log(tags["badges"]);
 
-                    if (badge == "subscriber") {
-                        tagsUrl.push(
-                            "https://static-cdn.jtvnw.net/badges/v1/5d9f2208-5dd8-11e7-8513-2ff4adfae661/3"
-                        );
-                    } else {
-                        let badgetversion =
-                            versionBadge.versions[tags["badges"][badge]][
-                                "image_url_4x"
-                            ];
-                        if (!badgetversion) continue;
-                        tagsUrl.push(badgetversion);
+            if (query.badge) {
+                if (tags["badges"]) {
+                    for (let badge of Object.keys(tags["badges"])) {
+                        const versionBadge = arrayBadge[badge];
+
+                        if (badge == "subscriber") {
+                            tagsUrl.push(
+                                "https://static-cdn.jtvnw.net/badges/v1/5d9f2208-5dd8-11e7-8513-2ff4adfae661/3"
+                            );
+                        } else {
+                            let badgetversion =
+                                versionBadge.versions[tags["badges"][badge]][
+                                    "image_url_4x"
+                                ];
+                            if (!badgetversion) continue;
+                            tagsUrl.push(badgetversion);
+                        }
                     }
                 }
             }
