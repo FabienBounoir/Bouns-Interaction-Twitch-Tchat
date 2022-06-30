@@ -1,6 +1,7 @@
-<script>
+<script setup>
     import { fade, scale, slide } from "svelte/transition";
     import { quintOut } from "svelte/easing";
+    import { onMount } from "svelte";
     import { v4 } from "uuid";
 
     import agacer from "./assets/animation/agacer.png";
@@ -104,6 +105,14 @@
     let tchatMax = parseInt(query.maxdelete) || 8;
     let timeMessage = parseInt(query.timemessage) || 1000;
 
+    onMount (() => {
+        if(query.theme == "glass") {
+            document.getElementsByTagName("ul")[0].classList.add("lineargradient");
+        }
+    });
+
+
+
     //remplace les text par les emotes correspondante
     function parseEmote(text, emotes) {
         var splitText = text.split("");
@@ -149,6 +158,8 @@
     if (query.message === "true" || false) {
         client.on("message", async (channel, tags, message, self) => {
             if (tags["message-type"] == "whisper") return;
+
+            console.log(tags)
 
             let tagsUrl = [];
 
@@ -227,8 +238,7 @@
                 }
             }
 
-            push(
-                {
+            let messageJson = {
                     message: `${
                         tags.emotes == null
                             ? message
@@ -237,9 +247,14 @@
                     username: tags["display-name"],
                     type: "tchat",
                     tagsUrl,
-                },
-                15000
-            );
+                }
+
+            if(query.theme == "glass")
+            {
+                messageJson.color = tags["color"]
+            }
+
+            push(messageJson,15000);
 
             if (tchat.length == 0) {
                 setTimeout(() => {
@@ -478,6 +493,59 @@
         }
     }
 
+    push({
+        message:
+            "Je me lance en septembre sans avoir pu négocier une rupture conventionnelle, jai peur a, Mais trop contente !!",
+        username: "BadbounsTV",
+        type: "tchat",
+        tagsUrl: [],
+    });
+    push({
+        message: "Bienvenue chez Basti tibaroc 🤗",
+        username: "ICESOU",
+        type: "tchat",
+        tagsUrl: [
+            "https://static-cdn.jtvnw.net/badges/v1/3267646d-33f0-4b17-b3df-f923a41db1d0/3",
+            "https://static-cdn.jtvnw.net/badges/v1/3158e758-3cb4-43c5-94b3-7639810451c5/3",
+        ],
+    });
+    push({
+        message: "et toi t'en fais de la musculation",
+        username: "RushJumper",
+        type: "tchat",
+        tagsUrl: [
+            "https://static-cdn.jtvnw.net/badges/v1/3267646d-33f0-4b17-b3df-f923a41db1d0/3",
+            "https://static-cdn.jtvnw.net/badges/v1/3158e758-3cb4-43c5-94b3-7639810451c5/3",
+        ],
+    });
+    push({
+        message: "@Akiyuki_000",
+        username: "Akiyuki_000",
+        type: "tchat",
+        tagsUrl: [
+            "https://static-cdn.jtvnw.net/badges/v1/3267646d-33f0-4b17-b3df-f923a41db1d0/3",
+            "https://static-cdn.jtvnw.net/badges/v1/3158e758-3cb4-43c5-94b3-7639810451c5/3",
+        ],
+    });
+    push({
+        message: "@Akiyuki_000",
+        username: "Akiyuki_000",
+        type: "tchat",
+        tagsUrl: [
+            "https://static-cdn.jtvnw.net/badges/v1/3267646d-33f0-4b17-b3df-f923a41db1d0/3",
+            "https://static-cdn.jtvnw.net/badges/v1/3158e758-3cb4-43c5-94b3-7639810451c5/3",
+        ],
+    });
+    push({
+        message: "@Akiyuki_000",
+        username: "Akiyuki_000",
+        type: "tchat",
+        tagsUrl: [
+            "https://static-cdn.jtvnw.net/badges/v1/3267646d-33f0-4b17-b3df-f923a41db1d0/3",
+            "https://static-cdn.jtvnw.net/badges/v1/3158e758-3cb4-43c5-94b3-7639810451c5/3",
+        ],
+    });
+
     // push({message: `cououeeg`, username:'BadbounsTV', type: "tchat"})
     // push({message: `@BadbounsTV a été ban !`, name:"Ban", type: "ban"})
     // push({message: `@BadbounsTV expulsé pour 120 secondes`, name:"Time Out", type: "ban"})
@@ -567,6 +635,7 @@
                                                 : 200,
                                     }}
                                 >
+                                <span class="badges">
                                     {#each message.tagsUrl as badge (badge)}
                                         <img
                                             src={badge}
@@ -574,8 +643,10 @@
                                             class="badge"
                                         />
                                     {/each}
-                                    <b>{message.username}:&nbsp;</b
-                                    >{@html message.message}
+                                </span>
+                                <b class="username" style="{message.color ? ("color: "+ message.color) : ("")}">{message.username}:</b>
+                                <br>
+                                <span class="message">{@html message.message}</span>
                                 </p>
                             {/if}
                             {#if message.type == "ban"}
@@ -655,6 +726,21 @@
             Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
     }
 
+    .username{
+        font-size: 0.8em;
+        font-weight: normal;
+    }
+
+    .badge{
+        vertical-align: middle;
+    }
+
+    .lineargradient {
+        -webkit-mask-image: -webkit-gradient(linear, center top, center bottom, 
+        color-stop(0.00,  rgba(0,0,0,0)),
+        color-stop(1.00,  rgba(0,0,0,1)));
+    }
+
     *,
     *::after,
     *::before {
@@ -667,6 +753,7 @@
         overflow: hidden;
         overflow-x: hidden;
     }
+
 
     .animationAvatar {
         position: absolute;
@@ -791,9 +878,9 @@
 
     li {
         list-style-type: none;
-
-        /* backdrop-filter: blur( 6px );
-        -webkit-backdrop-filter: blur( 6px ); */
+/* 
+        backdrop-filter: blur( 6px );
+        -webkit-backdrop-filter: blur( 6px );  */
 
         /* background-color: rgb(176, 158, 149); */
 
@@ -819,6 +906,8 @@
         text-align: right;
     }
 
+    /* ////////////////////// theme ////////////////////: */
+
     .white {
         color: #fff;
         border: 1px solid rgba(255, 255, 255, 0.3);
@@ -827,6 +916,33 @@
         box-shadow: 0 8px 12px 0 rgba(31, 38, 135, 0.37);
         text-shadow: 0 2px 4px rgb(0 0 0 / 66%);
         /* text-shadow: 0 2px 4px rgb(71 97 206 / 36%);  */
+    }
+
+    .glass {
+        background-color: rgba(42, 42, 42, 0.2);
+        border-radius: 0.2em;
+        padding: 0.2em;
+        min-width: 25em;
+        margin: 5px 10px;
+        color: rgb(255, 255, 255);
+    }
+
+    .glass p .username {
+        font-size: 0.8em;
+        font-size: 200;
+    }
+    
+    .glass p .message{
+        font-size: 1em;
+        font-weight: 300;
+    }
+
+    .glass:last-child {
+        margin-bottom: 10px;
+    }
+
+    .glass p{
+        margin: 10px;
     }
 
     .flatwhite {
@@ -935,6 +1051,16 @@
         background: rgb(44, 40, 40, 0.6);
         color: #e3dfdf;
         /* background: rgb(100, 100, 100, 0.8); */
+    }
+
+    /* //////////////////// Theme //////////////////// */
+
+    .badge {
+        margin: 0 0 0 0.12em;
+    }
+
+    .badge:first-child {
+        margin: 0;
     }
 
     li p {
