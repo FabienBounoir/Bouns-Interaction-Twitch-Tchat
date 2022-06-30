@@ -493,13 +493,13 @@
         }
     }
 
-    push({
-        message:
-            "Je me lance en septembre sans avoir pu négocier une rupture conventionnelle, jai peur a, Mais trop contente !!",
-        username: "BadbounsTV",
-        type: "tchat",
-        tagsUrl: [],
-    });
+    // push({
+    //     message:
+    //         "Je me lance en septembre sans avoir pu négocier une rupture conventionnelle, jai peur a, Mais trop contente !!",
+    //     username: "BadbounsTV",
+    //     type: "tchat",
+    //     tagsUrl: [],
+    // });
 
     // push({message: `cououeeg`, username:'BadbounsTV', type: "tchat"})
     // push({message: `@BadbounsTV a été ban !`, name:"Ban", type: "ban"})
@@ -600,7 +600,9 @@
                                     {/each}
                                 </span>
                                 <b class="username" style="{message.color ? ("color: "+ message.color) : ("")}">{message.username}:</b>
+                                {#if query.theme == "glass"}
                                 <br>
+                                {/if}
                                 <span class="message">{@html message.message}</span>
                                 </p>
                             {/if}
@@ -681,19 +683,20 @@
             Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
     }
 
-    .username{
+    .glass p .username{
         font-size: 0.8em;
         font-weight: normal;
     }
 
-    .badge{
+    .glass p .badge{
         vertical-align: middle;
     }
 
-    .lineargradient {
-        -webkit-mask-image: -webkit-gradient(linear, center top, center bottom, 
+    .glass p .lineargradient {
+        /* -webkit-mask-size: 300px 100vh; */
+        /* -webkit-mask-image: -webkit-gradient(linear, center top, center bottom, 
         color-stop(0.00,  rgba(0,0,0,0)),
-        color-stop(1.00,  rgba(0,0,0,1)));
+        color-stop(1.00,  rgba(0,0,0,1))); */
     }
 
     *,
@@ -874,8 +877,8 @@
     }
 
     .glass {
-        background-color: rgba(42, 42, 42, 0.2);
-        border-radius: 0.2em;
+        background-color: rgba(42, 42, 42, 0.98);
+        border-radius: 0.3em;
         padding: 0.2em;
         min-width: 25em;
         margin: 5px 10px;
