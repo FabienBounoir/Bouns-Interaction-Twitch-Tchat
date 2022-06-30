@@ -500,51 +500,6 @@
         type: "tchat",
         tagsUrl: [],
     });
-    push({
-        message: "Bienvenue chez Basti tibaroc 🤗",
-        username: "ICESOU",
-        type: "tchat",
-        tagsUrl: [
-            "https://static-cdn.jtvnw.net/badges/v1/3267646d-33f0-4b17-b3df-f923a41db1d0/3",
-            "https://static-cdn.jtvnw.net/badges/v1/3158e758-3cb4-43c5-94b3-7639810451c5/3",
-        ],
-    });
-    push({
-        message: "et toi t'en fais de la musculation",
-        username: "RushJumper",
-        type: "tchat",
-        tagsUrl: [
-            "https://static-cdn.jtvnw.net/badges/v1/3267646d-33f0-4b17-b3df-f923a41db1d0/3",
-            "https://static-cdn.jtvnw.net/badges/v1/3158e758-3cb4-43c5-94b3-7639810451c5/3",
-        ],
-    });
-    push({
-        message: "@Akiyuki_000",
-        username: "Akiyuki_000",
-        type: "tchat",
-        tagsUrl: [
-            "https://static-cdn.jtvnw.net/badges/v1/3267646d-33f0-4b17-b3df-f923a41db1d0/3",
-            "https://static-cdn.jtvnw.net/badges/v1/3158e758-3cb4-43c5-94b3-7639810451c5/3",
-        ],
-    });
-    push({
-        message: "@Akiyuki_000",
-        username: "Akiyuki_000",
-        type: "tchat",
-        tagsUrl: [
-            "https://static-cdn.jtvnw.net/badges/v1/3267646d-33f0-4b17-b3df-f923a41db1d0/3",
-            "https://static-cdn.jtvnw.net/badges/v1/3158e758-3cb4-43c5-94b3-7639810451c5/3",
-        ],
-    });
-    push({
-        message: "@Akiyuki_000",
-        username: "Akiyuki_000",
-        type: "tchat",
-        tagsUrl: [
-            "https://static-cdn.jtvnw.net/badges/v1/3267646d-33f0-4b17-b3df-f923a41db1d0/3",
-            "https://static-cdn.jtvnw.net/badges/v1/3158e758-3cb4-43c5-94b3-7639810451c5/3",
-        ],
-    });
 
     // push({message: `cououeeg`, username:'BadbounsTV', type: "tchat"})
     // push({message: `@BadbounsTV a été ban !`, name:"Ban", type: "ban"})
