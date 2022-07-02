@@ -4,18 +4,18 @@
     import { onMount } from "svelte";
     import { v4 } from "uuid";
 
-    import agacer from "./assets/animation/agacer.png";
-    import fete from "./assets/animation/fete.png";
-    import grrr from "./assets/animation/grrr.png";
-    import hop from "./assets/animation/hop.png";
-    import love from "./assets/animation/love.png";
-    import nice from "./assets/animation/nice.png";
-    import yo from "./assets/animation/yo.png";
-    import ah from "./assets/animation/ah.png";
-    import explosion from "./assets/animation/explosion.png";
-    import insulte from "./assets/animation/insulte.png";
-    import non from "./assets/animation/non.png";
-    import oups from "./assets/animation/oups.png";
+    import agacer from "./assets/avatar/agacer.png";
+    import fete from "./assets/avatar/fete.png";
+    import grrr from "./assets/avatar/grrr.png";
+    import hop from "./assets/avatar/hop.png";
+    import love from "./assets/avatar/love.png";
+    import nice from "./assets/avatar/nice.png";
+    import yo from "./assets/avatar/yo.png";
+    import ah from "./assets/avatar/ah.png";
+    import explosion from "./assets/avatar/explosion.png";
+    import insulte from "./assets/avatar/insulte.png";
+    import non from "./assets/avatar/non.png";
+    import oups from "./assets/avatar/oups.png";
 
     import bleucyan from "./assets/logo/logo-bleu-cyan.png";
     import bleuyellow from "./assets/logo/logo-bleu-yellow.png";
@@ -30,7 +30,7 @@
     import violet from "./assets/logo/logo-violet.png";
     import white from "./assets/logo/logo-white.png";
     import yellow from "./assets/logo/logo-yellow.png";
-    import bits from "./assets/bits.gif";
+    import bits from "./assets/bits/bits.gif";
 
     let asVideo = false;
     let lienVideo = "";
@@ -105,13 +105,13 @@
     let tchatMax = parseInt(query.maxdelete) || 8;
     let timeMessage = parseInt(query.timemessage) || 1000;
 
-    onMount (() => {
-        if(query.theme == "glass") {
-            document.getElementsByTagName("ul")[0].classList.add("lineargradient");
+    onMount(() => {
+        if (query.theme == "glass") {
+            document
+                .getElementsByTagName("ul")[0]
+                .classList.add("lineargradient");
         }
     });
-
-
 
     //remplace les text par les emotes correspondante
     function parseEmote(text, emotes) {
@@ -159,7 +159,7 @@
         client.on("message", async (channel, tags, message, self) => {
             if (tags["message-type"] == "whisper") return;
 
-            console.log(tags)
+            console.log(tags);
 
             let tagsUrl = [];
 
@@ -239,22 +239,21 @@
             }
 
             let messageJson = {
-                    message: `${
-                        tags.emotes == null
-                            ? message
-                            : parseEmote(message, tags.emotes)
-                    }`,
-                    username: tags["display-name"],
-                    type: "tchat",
-                    tagsUrl,
-                }
+                message: `${
+                    tags.emotes == null
+                        ? message
+                        : parseEmote(message, tags.emotes)
+                }`,
+                username: tags["display-name"],
+                type: "tchat",
+                tagsUrl,
+            };
 
-            if(query.theme == "glass")
-            {
-                messageJson.color = tags["color"]
+            if (query.theme == "glass") {
+                messageJson.color = tags["color"];
             }
 
-            push(messageJson,15000);
+            push(messageJson, 15000);
 
             if (tchat.length == 0) {
                 setTimeout(() => {
@@ -590,20 +589,27 @@
                                                 : 200,
                                     }}
                                 >
-                                <span class="badges">
-                                    {#each message.tagsUrl as badge (badge)}
-                                        <img
-                                            src={badge}
-                                            alt=" "
-                                            class="badge"
-                                        />
-                                    {/each}
-                                </span>
-                                <b class="username" style="{message.color ? ("color: "+ message.color) : ("")}">{message.username}:</b>
-                                {#if query.theme == "glass"}
-                                <br>
-                                {/if}
-                                <span class="message">{@html message.message}</span>
+                                    <span class="badges">
+                                        {#each message.tagsUrl as badge (badge)}
+                                            <img
+                                                src={badge}
+                                                alt=" "
+                                                class="badge"
+                                            />
+                                        {/each}
+                                    </span>
+                                    <b
+                                        class="username"
+                                        style={message.color
+                                            ? "color: " + message.color
+                                            : ""}>{message.username}:</b
+                                    >
+                                    {#if query.theme == "glass"}
+                                        <br />
+                                    {/if}
+                                    <span class="message"
+                                        >{@html message.message}</span
+                                    >
                                 </p>
                             {/if}
                             {#if message.type == "ban"}
@@ -683,12 +689,12 @@
             Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
     }
 
-    .glass p .username{
+    .glass p .username {
         font-size: 0.8em;
         font-weight: normal;
     }
 
-    .glass p .badge{
+    .glass p .badge {
         vertical-align: middle;
     }
 
@@ -711,7 +717,6 @@
         overflow: hidden;
         overflow-x: hidden;
     }
-
 
     .animationAvatar {
         position: absolute;
@@ -836,7 +841,7 @@
 
     li {
         list-style-type: none;
-/* 
+        /* 
         backdrop-filter: blur( 6px );
         -webkit-backdrop-filter: blur( 6px );  */
 
@@ -889,8 +894,8 @@
         font-size: 0.8em;
         font-size: 200;
     }
-    
-    .glass p .message{
+
+    .glass p .message {
         font-size: 1em;
         font-weight: 300;
     }
@@ -899,7 +904,7 @@
         margin-bottom: 10px;
     }
 
-    .glass p{
+    .glass p {
         margin: 10px;
     }
 
